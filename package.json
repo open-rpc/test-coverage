@@ -6,7 +6,9 @@
     "test": "jest",
     "build": "tsc"
   },
-  "main": "index.js",
+  "bin": {
+    "open-rpc-test-coverage": "./bin/cli.js"
+  },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
