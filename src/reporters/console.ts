@@ -9,7 +9,7 @@ export default (callResults: any[]) => {
       console.log('⛔️', call.method, 'ERROR:', call.error)
     } else {
       metrics.success++;
-      //console.log('✅', call.method)
+      console.log('✅', call.method)
     }
   })
   console.log('==========');

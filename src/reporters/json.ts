@@ -1,3 +1,3 @@
 export default (callResults: any[]) => {
-  console.log(callResults);
+  console.log(JSON.stringify(callResults, undefined, 4));
 }
