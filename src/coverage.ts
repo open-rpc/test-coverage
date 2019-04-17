@@ -9,8 +9,6 @@ const getParams = async (params: any[]) => {
   return Promise.all(promises);
 }
 
-let schema: OpenRPC;
-
 const results: any[] = [];
 
 interface IOptions {
