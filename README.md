@@ -37,4 +37,4 @@ open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/ma
 
 ##### console reporter
 
-![image](https://user-images.githubusercontent.com/364566/56315309-377dbd80-610c-11e9-8be3-dd99f6325461.png)
+![image](https://user-images.githubusercontent.com/364566/56318521-3e103300-6114-11e9-85cd-f35eb7b42a0e.png)
