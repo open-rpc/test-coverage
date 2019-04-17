@@ -14,3 +14,10 @@ Even after writing your OpenRPC Document, you want to test that the OpenRPC Docu
 - use the servers[] defined in the OpenRPC Document to make the JSON-RPC API call
 - report back the coverage results
 - show errors and the result to help fix inconsistencies
+
+
+#### Screenshot
+
+##### console reporter
+
+![image](https://user-images.githubusercontent.com/364566/56315309-377dbd80-610c-11e9-8be3-dd99f6325461.png)
