@@ -15,6 +15,23 @@ Even after writing your OpenRPC Document, you want to test that the OpenRPC Docu
 - report back the coverage results
 - show errors and the result to help fix inconsistencies
 
+### Installation:
+
+```
+
+npm install -g @open-rpc/test-coverage
+
+```
+
+
+### Usage:
+
+
+```
+open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/master/service-descriptions/simple-math-openrpc.json --transport=http --reporter=console --skipMethods=addition
+```
+
+
 
 #### Screenshot
 
