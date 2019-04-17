@@ -1,7 +1,7 @@
 {
   "name": "@open-rpc/test-coverage",
   "version": "0.0.0-development",
-  "description": "",
+  "description": "Test your OpenRPC Document against an API.",
   "scripts": {
     "test": "jest",
     "build": "tsc"
@@ -9,6 +9,11 @@
   "bin": {
     "open-rpc-test-coverage": "./bin/cli.js"
   },
+  "files": [
+    "bin",
+    "build"
+  ],
+  "main": "build/coverage.js",
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
