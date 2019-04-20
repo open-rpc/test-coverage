@@ -22,9 +22,9 @@ interface IOptions {
 
 export default async (options: IOptions) => {
   return coverage({
-    reporter: reporters[options.reporter],
+    reporter: reporters[options.reporter || 'console'],
     schema: options.schema,
     skipMethods: options.skipMethods || [],
-    transport: transports[options.transport]
+    transport: transports[options.transport || 'http']
   });
 }

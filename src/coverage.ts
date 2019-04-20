@@ -9,7 +9,6 @@ const getParams = async (params: any[]) => {
   return Promise.all(promises);
 }
 
-const results: any[] = [];
 
 interface IOptions {
   schema: OpenRPC;
@@ -19,6 +18,7 @@ interface IOptions {
 }
 
 export default async (options: IOptions) => {
+  const results: any[] = [];
   const promises = options.schema.methods.map(async (method) => {
     if (options.skipMethods.includes(method.name)) {
       return Promise.resolve();
@@ -31,22 +31,11 @@ export default async (options: IOptions) => {
     return Promise.all(urls.map((url) => {
       return options.transport(url, method.name, params)
         .then((r: any) => {
-          if (r.error && r.error.message.includes('does not exist')) {
-            results.push({
-              method: method.name,
-              error: 'Method Does Not Exist'
-            });
-          } else if (r.error) {
-            results.push({
-              method: method.name,
-              error: r.error.message
-            });
-          } else {
-            results.push({
-              method: method.name,
-              result: r.result
-            });
-          }
+          results.push({
+            method: method.name,
+            params,
+            ...r
+          })
         });
     }))
   });
