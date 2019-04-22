@@ -3,7 +3,6 @@ const program = require('commander');
 const orpcCoverage = require('../build').default;
 const { parseOpenRPCDocument } = require('@open-rpc/schema-utils-js');
 
-
 const getSkipMethods = (input) => {
   if (input && input.split(',').length > 0) {
     return input.split(',');
@@ -18,7 +17,7 @@ program
   .option('-s, --schema [schema]', 'JSON string or a Path/Url pointing to an open rpc schema')
   .option('-r, --reporter <reporter>', 'Use the specified reporter [console] [json]')
   .option('-t, --transport <transport>', 'Use the specified transport [http]')
-  .option('--skipMethods <skipMethods>', 'Use the specified transport [http]')
+  .option('--skipMethods <skipMethods>', 'Methods to skip')
   .action(async () => {
     let schema;
     try {

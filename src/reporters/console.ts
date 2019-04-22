@@ -1,3 +1,5 @@
+import colors from 'colors';
+
 export default (callResults: any[]) => {
   const metrics = {
     errors: 0,
@@ -6,14 +8,16 @@ export default (callResults: any[]) => {
   callResults.forEach((call) => {
     if (call.error) {
       metrics.errors++;
-      console.log('⛔️', call.method, 'ERROR:', call.error)
+      console.log(colors.red.underline('Error: '), colors.cyan(call.method));
+      console.log(call.error);
+      console.log(call.params);
     } else {
       metrics.success++;
-      console.log('✅', call.method)
+      console.log(colors.green('Success: '), call.method)
     }
   })
   console.log('==========');
-  console.log('Success: ', metrics.success);
-  console.log('Errors: ', metrics.errors);
+  console.log('Success: ', colors.green(metrics.success.toString()));
+  console.log('Errors: ', colors.red(metrics.errors.toString()));
   console.log('==========');
 };
