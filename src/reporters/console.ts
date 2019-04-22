@@ -8,7 +8,7 @@ export default (callResults: any[]) => {
   callResults.forEach((call) => {
     if (call.error) {
       metrics.errors++;
-      console.log(colors.red.underline('Error:'), colors.cyan(call.method));
+      console.log(colors.red.underline('Error: '), colors.cyan(call.method));
       console.log(call.error);
       console.log(call.params);
     } else {
