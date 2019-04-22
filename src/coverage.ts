@@ -14,7 +14,7 @@ interface IOptions {
   schema: OpenRPC;
   skipMethods: string[];
   transport(url: string, method: string, params: any[]): PromiseLike<any>;
-  reporter(value: any[]): any;
+  reporter(value: any[], schema: OpenRPC): any;
 }
 
 export default async (options: IOptions) => {
@@ -40,7 +40,6 @@ export default async (options: IOptions) => {
     }))
   });
 
-  return Promise.all(promises).then(() => {
-    return results;
-  }).then(options.reporter)
+  const callResults = await Promise.all(promises);
+  options.reporter(callResults, options.schema);
 }
