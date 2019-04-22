@@ -21,7 +21,7 @@ export default async (options: IOptions) => {
   const results: any[] = [];
   const promises = options.schema.methods.map(async (method) => {
     if (options.skipMethods.includes(method.name)) {
-      return Promise.resolve();
+      return;
     }
     const params = await getParams(method.params);
     const urls = (options.schema.servers || []).map((u) => {
