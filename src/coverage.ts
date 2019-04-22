@@ -40,10 +40,6 @@ export default async (options: IOptions) => {
     }))
   });
 
-  const results = await Promise.all(promises);
-  options.reporter(results, options.schema);
-    return results;
-  }).then((callResults) => {
-    options.reporter(callResults, options.schema);
-  });
+  const callResults = await Promise.all(promises);
+  options.reporter(callResults, options.schema);
 }
