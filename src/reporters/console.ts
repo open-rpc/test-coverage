@@ -8,6 +8,7 @@ export default (callResults: any[], schema: OpenRPC) => {
     errors: 0,
     success: 0
   }
+  
   callResults.forEach((call) => {
     if (call.error) {
       metrics.errors++;
@@ -21,7 +22,7 @@ export default (callResults: any[], schema: OpenRPC) => {
         return console.log(`Error: no result defined for ${call.method}`);
       }
 
-      const isValid = ajv.validate((methodSchema.result as ContentDescriptorObject).schema, `${call.method}/results`);
+      const isValid = ajv.validate((methodSchema.result as ContentDescriptorObject).schema, call.result);
       const errors = ajv.errors as ErrorObject[];
 
       if (isValid) {
