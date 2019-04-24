@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch';
+import fetch from "isomorphic-fetch";
 let id = 1;
 
 export default (url: string, method: string, params: any[]) => {
@@ -9,9 +9,9 @@ export default (url: string, method: string, params: any[]) => {
       jsonrpc: "2.0",
       id: id++,
       method,
-      params
-    })
+      params,
+    }),
   }).then((r: any) => {
     return r.json();
-  })
+  });
 };
