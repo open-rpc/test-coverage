@@ -5,50 +5,71 @@ const mockSchema = {
   openrpc: "1.0.0",
   info: {
     title: "my api",
-    version: "0.0.0-development"
+    version: "0.0.0-development",
   },
   servers: [
     {
-      name: 'my api',
-      url: 'http://localhost:3333'
-    }
+      name: "my api",
+      url: "http://localhost:3333",
+    },
   ],
   methods: [
     {
-      name: 'foo',
+      name: "foo",
       params: [],
       result: {
-        name: 'fooResult',
+        name: "fooResult",
         schema: {
-          type: 'boolean'
-        }
-      }
-    }
-  ]
-} as OpenRPC
+          type: "boolean",
+        },
+      },
+    },
+  ],
+} as OpenRPC;
 
-describe('coverage', () => {
-  it('can call the reporter', (done) => {
-    const reporter = () => done()
-    const transport = () => Promise.resolve({})
-    coverage({
-      reporter,
-      transport,
-      schema: mockSchema,
-      skipMethods: []
-    })
-  })
-  it('can call the transport', (done) => {
-    const reporter = () => {}
-    const transport = () => {
-      done();
-      return Promise.resolve({});
-    }
-    coverage({
-      reporter,
-      transport,
-      schema: mockSchema,
-      skipMethods: []
-    })
-  })
+describe("coverage", () => {
+  describe("reporter", () => {
+    it("can call the reporter", (done) => {
+      const reporter = (callResults: any[], schema: OpenRPC) => {
+        done();
+      };
+      const transport = () => Promise.resolve();
+      coverage({
+        reporter,
+        transport,
+        schema: mockSchema,
+        skipMethods: [],
+      });
+    });
+    it("can call the reporter with the results", (done) => {
+      const reporter = (callResults: any[], schema: OpenRPC) => {
+        expect(callResults[0].result.foo).toBe("bar");
+        done();
+      };
+      const transport = (url: string, method: string, params: any[]) => Promise.resolve({ result: { foo: "bar" } });
+      coverage({
+        reporter,
+        transport,
+        schema: mockSchema,
+        skipMethods: [],
+      });
+    });
+  });
+  describe("transport", () => {
+    it("can call the transport", (done) => {
+      const reporter = () => {
+        // empty reporter
+      };
+      const transport = () => {
+        done();
+        return Promise.resolve({});
+      };
+      coverage({
+        reporter,
+        transport,
+        schema: mockSchema,
+        skipMethods: [],
+      });
+    });
+  });
 });
