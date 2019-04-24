@@ -1,6 +1,13 @@
 import colors from "colors";
 import Ajv, { ErrorObject, Ajv as IAjv } from "ajv";
-import { OpenRPC, MethodObject, ContentDescriptorObject } from "@open-rpc/meta-schema";
+import {
+  OpenRPC,
+  MethodObject,
+  ContentDescriptorObject,
+  ExamplePairingObject,
+  ExampleObject,
+} from "@open-rpc/meta-schema";
+import json from "./json";
 
 export default (callResults: any[], schema: OpenRPC) => {
   const ajv = new Ajv();
@@ -31,6 +38,24 @@ export default (callResults: any[], schema: OpenRPC) => {
         };
       }
 
+      if (methodSchema.examples && methodSchema.examples.length > 0) {
+        const example = (methodSchema.examples[call.exampleIndex] as ExamplePairingObject);
+        const checkParams = (example.params as ExampleObject[]).map((p: ExampleObject) => p.value);
+        const paramsEqual = (JSON.stringify(checkParams) === JSON.stringify(call.params));
+        const resultEqual = JSON.stringify(call.result) === JSON.stringify((example.result as ExampleObject).value)
+        if (paramsEqual && resultEqual) {
+          metrics.success++;
+          console.log(colors.green("Example Success: "), call.method, call.params, call.result);
+        } else {
+          console.log(colors.red.underline("Example Validation Error: "), colors.cyan(call.method));
+          console.log('params: ', call.params);
+          console.log('result: ', call.result);
+          console.log('examples: ', methodSchema.examples);
+          console.log('method object', methodSchema);
+        }
+        return;
+      }
+
       ajv.validate(resultSchema, call.result);
       const errors = ajv.errors as ErrorObject[];
 
@@ -39,11 +64,10 @@ export default (callResults: any[], schema: OpenRPC) => {
         console.log(colors.green("Success: "), call.method);
       } else {
         console.log(colors.red.underline("Result Validation Error: "), colors.cyan(call.method));
-        console.log(call);
-        console.log(errors);
-        console.log(methodSchema);
+        console.log('call: ', call);
+        console.log('errors: ', errors);
+        console.log('method: ', methodSchema);
       }
-
     }
   });
   console.log("==========");
