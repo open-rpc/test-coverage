@@ -74,4 +74,5 @@ export default (callResults: any[], schema: OpenRPC) => {
   console.log("Success: ", colors.green(metrics.success.toString()));
   console.log("Errors: ", colors.red(metrics.errors.toString()));
   console.log("==========");
+  process.exit(metrics.errors);
 };
