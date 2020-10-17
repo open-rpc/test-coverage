@@ -41,15 +41,17 @@ export default (callResults: ExampleCall[], schema: OpenrpcDocument) => {
           const expected = getExpectedString(ex);
           console.log(
             "\t",
-            colors.bgWhite(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`)),
-            colors.magenta(" -> "),
-            colors.white(expected),
+            colors.bold(colors.green("✓")),
+            colors.magenta("-"),
+            colors.blue(`${methodName}(${JSON.stringify(ex.params)})`),
           );
         } else {
           metrics.error++;
           const expected = getExpectedString(ex);
           console.log(
             "\t",
+            colors.bold(colors.red("X")),
+            colors.magenta("-"),
             colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`)),
             colors.magenta(" -> "),
             colors.red(expected),
