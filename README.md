@@ -1,4 +1,14 @@
 # OpenRPC Test Coverage
+<center>
+  <span>
+    <img alt="CircleCI branch" src="https://img.shields.io/circleci/project/github/open-rpc/test-coverage/master.svg">
+    <img src="https://codecov.io/gh/open-rpc/test-coverage/branch/master/graph/badge.svg" />
+    <img alt="Dependabot status" src="https://api.dependabot.com/badges/status?host=github&repo=open-rpc/test-coverage" />
+    <img alt="npm" src="https://img.shields.io/npm/dt/@open-rpc/test-coverage.svg" />
+    <img alt="GitHub release" src="https://img.shields.io/github/release/open-rpc/test-coverage.svg" />
+    <img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/open-rpc/test-coverage/latest.svg" />
+  </span>
+</center>
 
 This tool is meant to help you test your OpenRPC Document against an API.
 
