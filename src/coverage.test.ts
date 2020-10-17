@@ -37,7 +37,7 @@ describe("coverage", () => {
       coverage({
         reporter,
         transport,
-        schema: mockSchema,
+        openrpcDocument: mockSchema,
         skipMethods: [],
       });
     });
@@ -46,11 +46,13 @@ describe("coverage", () => {
         expect(callResults[0].result.foo).toBe("bar");
         done();
       };
-      const transport = (url: string, method: string, params: any[]) => Promise.resolve({ result: { foo: "bar" } });
+      const transport = (url: string, method: string, params: any[]) => {
+        return Promise.resolve({ result: { foo: "bar" } });
+      };
       coverage({
         reporter,
         transport,
-        schema: mockSchema,
+        openrpcDocument: mockSchema,
         skipMethods: [],
       });
     });
@@ -67,7 +69,7 @@ describe("coverage", () => {
       coverage({
         reporter,
         transport,
-        schema: mockSchema,
+        openrpcDocument: mockSchema,
         skipMethods: [],
       });
     });

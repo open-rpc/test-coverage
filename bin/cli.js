@@ -27,12 +27,16 @@ program
       process.exit(1);
     }
 
-    orpcCoverage({ schema, transport: program.transport, reporter: program.reporter, skipMethods: getSkipMethods(program.skipMethods) })
-      .then(() => {
-      })
-      .catch((e) => {
-        console.error(e);
-        process.exit(1);
+    try {
+      await orpcCoverage({
+        openrpcDocument: schema,
+        transport: program.transport,
+        reporter: program.reporter,
+        skipMethods: getSkipMethods(program.skipMethods)
       });
+    } catch (e) {
+      console.error(e);
+      process.exit(1);
+    }
   })
   .parse(process.argv);
