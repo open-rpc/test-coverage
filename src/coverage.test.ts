@@ -1,5 +1,5 @@
 import coverage from "./coverage";
-import { OpenRPC } from "@open-rpc/meta-schema";
+import { OpenrpcDocument } from "@open-rpc/meta-schema";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -25,32 +25,34 @@ const mockSchema = {
       },
     },
   ],
-} as OpenRPC;
+} as OpenrpcDocument;
 
 describe("coverage", () => {
   describe("reporter", () => {
     it("can call the reporter", (done) => {
-      const reporter = (callResults: any[], schema: OpenRPC) => {
+      const reporter = (callResults: any[], schema: OpenrpcDocument) => {
         done();
       };
       const transport = () => Promise.resolve();
       coverage({
         reporter,
         transport,
-        schema: mockSchema,
+        openrpcDocument: mockSchema,
         skipMethods: [],
       });
     });
     it("can call the reporter with the results", (done) => {
-      const reporter = (callResults: any[], schema: OpenRPC) => {
+      const reporter = (callResults: any[], schema: OpenrpcDocument) => {
         expect(callResults[0].result.foo).toBe("bar");
         done();
       };
-      const transport = (url: string, method: string, params: any[]) => Promise.resolve({ result: { foo: "bar" } });
+      const transport = (url: string, method: string, params: any[]) => {
+        return Promise.resolve({ result: { foo: "bar" } });
+      };
       coverage({
         reporter,
         transport,
-        schema: mockSchema,
+        openrpcDocument: mockSchema,
         skipMethods: [],
       });
     });
@@ -67,7 +69,7 @@ describe("coverage", () => {
       coverage({
         reporter,
         transport,
-        schema: mockSchema,
+        openrpcDocument: mockSchema,
         skipMethods: [],
       });
     });
