@@ -1,4 +1,4 @@
-import { OpenRPC, ExamplePairingObject, ContentDescriptorObject, ExampleObject } from "@open-rpc/meta-schema";
+import { OpenrpcDocument, ExamplePairingObject, ExampleObject } from "@open-rpc/meta-schema";
 const jsf = require("json-schema-faker"); // tslint:disable-line
 
 const getFakeParams = async (params: any[]) => {
@@ -9,10 +9,10 @@ const getFakeParams = async (params: any[]) => {
 };
 
 interface IOptions {
-  schema: OpenRPC;
+  schema: OpenrpcDocument;
   skipMethods: string[];
   transport(url: string, method: string, params: any[]): PromiseLike<any>;
-  reporter(value: any[], schema: OpenRPC): any;
+  reporter(value: any[], schema: OpenrpcDocument): any;
 }
 
 export default async (options: IOptions) => {
@@ -40,7 +40,7 @@ export default async (options: IOptions) => {
         const r = await options.transport(url, method.name, params);
         results.push({
           method: method.name,
-          exampleIndex: exampleIndex,
+          exampleIndex,
           params,
           ...r,
         });

@@ -2,7 +2,7 @@ import consoleReporter from "./reporters/console";
 import coverage from "./coverage";
 import HTTPTransport from "./transports/HTTPTransport";
 import jsonReporter from "./reporters/json";
-import { OpenRPC } from "@open-rpc/meta-schema";
+import { OpenrpcDocument } from "@open-rpc/meta-schema";
 
 const reporters = {
   console: consoleReporter,
@@ -14,7 +14,7 @@ const transports = {
 };
 
 interface IOptions {
-  schema: OpenRPC;
+  schema: OpenrpcDocument;
   skipMethods?: string[];
   reporter: "console" | "json";
   transport: "http";

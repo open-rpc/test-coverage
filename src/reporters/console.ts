@@ -1,15 +1,14 @@
 import colors from "colors";
-import Ajv, { ErrorObject, Ajv as IAjv } from "ajv";
+import Ajv, { ErrorObject } from "ajv";
 import {
-  OpenRPC,
+  OpenrpcDocument,
   MethodObject,
   ContentDescriptorObject,
   ExamplePairingObject,
   ExampleObject,
 } from "@open-rpc/meta-schema";
-import json from "./json";
 
-export default (callResults: any[], schema: OpenRPC) => {
+export default (callResults: any[], schema: OpenrpcDocument) => {
   const ajv = new Ajv();
   const metrics = {
     errors: 0,
