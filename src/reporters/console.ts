@@ -52,29 +52,32 @@ export default (callResults: ExampleCall[], schema: OpenrpcDocument) => {
             "\t",
             colors.bold(colors.red("X")),
             colors.magenta("-"),
-            colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`)),
-            colors.magenta(" -> "),
-            colors.red(expected),
+            colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`))
+          );
+          console.log(
+            colors.magenta("\t\t\t \->"),
+            colors.white.underline("Expected result:"),
+            colors.white(expected),
           );
 
           if (ex.requestError) {
             console.log(
-              "\t\t \->",
-              colors.red.underline("instead got an error: "),
+              colors.magenta("\t\t\t \->"),
+              colors.white.underline("instead got an error: "),
               colors.red(ex.requestError)
             );
           } else {
             console.log(
-              "\t\t \->",
-              colors.red.underline("instead received: "),
-              colors.red(ex.result)
+              colors.magenta("\t\t\t \->"),
+              colors.white.underline("instead received: "),
+              colors.red(JSON.stringify(ex.result))
             );
 
             if (ex.reason) {
               console.log(
-                "\t\t \->",
-                colors.red.underline("Reason for being invalid: "),
-                colors.red(ex.reason)
+                colors.magenta("\t\t\t\t \->"),
+                colors.yellow.underline("Reason for being invalid: "),
+                colors.yellow(ex.reason)
               );
             }
           }
