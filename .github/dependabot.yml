@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/node"
+    versions:
+    - 15.0.0
+  - dependency-name: ajv
+    versions:
+    - 7.2.1
+    - 7.2.3
+    - 8.0.1
+    - 8.0.3
+    - 8.0.5
+    - 8.1.0
+  - dependency-name: "@open-rpc/meta-schema"
+    versions:
+    - 1.14.1
