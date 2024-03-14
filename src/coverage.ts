@@ -106,7 +106,6 @@ export default async (options: IOptions) => {
     } catch (e) {
       exampleCall.valid = false;
       exampleCall.requestError = e;
-      throw e;
     }
   }
 
