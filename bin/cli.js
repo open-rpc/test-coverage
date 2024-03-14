@@ -4,7 +4,6 @@ const orpcCoverage = require('../build').default;
 const { parseOpenRPCDocument } = require('@open-rpc/schema-utils-js');
 
 const getMethodsArray = (input) => {
-  console.log('input===>', input);
   if (input && input.split(',').length > 0) {
     return input.split(',');
   } else {
