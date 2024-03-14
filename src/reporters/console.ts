@@ -73,7 +73,6 @@ export default (callResults: ExampleCall[], schema: OpenrpcDocument) => {
               colors.white.underline("instead got an error: "),
               colors.red(ex.requestError)
             );
-            process.exit(1)
           } else {
             console.log(
               colors.magenta("\t\t\t ->"),
