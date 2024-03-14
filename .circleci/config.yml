@@ -28,7 +28,7 @@ aliases:
 defaults: &defaults
   working_directory: ~/test-coverage
   docker:
-    - image: circleci/node:20.0.0
+    - image: cimg/node:20.0.0
 
 jobs:
   test:
