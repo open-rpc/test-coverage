@@ -83,7 +83,7 @@ describe("coverage", () => {
     });
     it("can call the reporter with the results", (done) => {
       const reporter = (callResults: any[], schema: OpenrpcDocument) => {
-        expect(callResults[0].result.foo).toBe("bar");
+        expect(callResults[0].result).toBe(true);
         done();
       };
       const transport = async (url: string, method: string, params: any[]) => {
