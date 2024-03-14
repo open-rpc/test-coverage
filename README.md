@@ -39,7 +39,7 @@ npm install -g @open-rpc/test-coverage
 
 
 ```
-open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/master/service-descriptions/simple-math-openrpc.json --transport=http --reporter=console --skipMethods=addition
+open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/master/service-descriptions/simple-math-openrpc.json --transport=http --reporter=console --skip=addition
 ```
 
 

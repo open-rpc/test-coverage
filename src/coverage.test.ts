@@ -1,5 +1,6 @@
 import coverage from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
+import consoleReporter from "./reporters/console";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -24,6 +25,45 @@ const mockSchema = {
         },
       },
     },
+    {
+      name: "bar",
+      params: [
+        {
+          name: "barParam",
+          required: true,
+          schema: {
+            type: "string",
+            enum: ["bar"],
+          },
+        },
+        {
+          name: "barParam2",
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      result: {
+        name: "barResult",
+        schema: {
+          type: "boolean",
+        },
+      },
+      examples: [
+        {
+          name: "fooExample",
+          summary: "foo example",
+          description: "this is an example of foo",
+          params: [],
+          result: {
+            name: "fooResult",
+            schema: {
+              type: "boolean",
+            },
+          },
+        },
+      ],
+    },
   ],
 } as OpenrpcDocument;
 
@@ -38,22 +78,24 @@ describe("coverage", () => {
         reporter,
         transport,
         openrpcDocument: mockSchema,
-        skipMethods: [],
+        skip: [],
+        only: [],
       });
     });
-    it("can call the reporter with the results", (done) => {
+    it.only("can call the reporter with the results", (done) => {
       const reporter = (callResults: any[], schema: OpenrpcDocument) => {
         expect(callResults[0].result.foo).toBe("bar");
         done();
       };
-      const transport = (url: string, method: string, params: any[]) => {
-        return Promise.resolve({ result: { foo: "bar" } });
+      const transport = async (url: string, method: string, params: any[]) => {
+        return { result: true };
       };
       coverage({
-        reporter,
+        reporter: consoleReporter,
         transport,
         openrpcDocument: mockSchema,
-        skipMethods: [],
+        skip: [],
+        only: [],
       });
     });
   });
@@ -67,10 +109,11 @@ describe("coverage", () => {
         return Promise.resolve({});
       };
       coverage({
-        reporter,
+        reporter: consoleReporter,
         transport,
         openrpcDocument: mockSchema,
-        skipMethods: [],
+        skip: [],
+        only: [],
       });
     });
   });
