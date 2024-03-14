@@ -15,7 +15,8 @@ const transports = {
 
 interface IOptions {
   openrpcDocument: OpenrpcDocument;
-  skipMethods?: string[];
+  skip?: string[];
+  only?: string[];
   reporter: "console" | "json";
   transport: "http";
 }
@@ -24,7 +25,8 @@ export default async (options: IOptions) => {
   return coverage({
     reporter: reporters[options.reporter || "console"],
     openrpcDocument: options.openrpcDocument,
-    skipMethods: options.skipMethods || [],
+    skip: options.skip || [],
+    only: options.only || [],
     transport: transports[options.transport || "http"],
   });
 };
