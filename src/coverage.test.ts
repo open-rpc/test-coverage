@@ -1,6 +1,5 @@
 import coverage from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
-import consoleReporter from "./reporters/console";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -82,7 +81,7 @@ describe("coverage", () => {
         only: [],
       });
     });
-    it.only("can call the reporter with the results", (done) => {
+    it("can call the reporter with the results", (done) => {
       const reporter = (callResults: any[], schema: OpenrpcDocument) => {
         expect(callResults[0].result.foo).toBe("bar");
         done();
@@ -91,7 +90,7 @@ describe("coverage", () => {
         return { result: true };
       };
       coverage({
-        reporter: consoleReporter,
+        reporter,
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -109,7 +108,7 @@ describe("coverage", () => {
         return Promise.resolve({});
       };
       coverage({
-        reporter: consoleReporter,
+        reporter,
         transport,
         openrpcDocument: mockSchema,
         skip: [],
