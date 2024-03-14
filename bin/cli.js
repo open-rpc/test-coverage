@@ -26,7 +26,6 @@ program
       console.error(e);
       process.exit(1);
     }
-
     try {
       await orpcCoverage({
         openrpcDocument: schema,

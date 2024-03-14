@@ -7,7 +7,8 @@ import {
   Servers
 } from "@open-rpc/meta-schema";
 const jsf = require("json-schema-faker"); // tslint:disable-line
-import Ajv from "ajv";
+import validator from "@json-schema-tools/validator"
+
 import { isEqual } from "lodash";
 
 const getFakeParams = (params: any[]): any[] => {
@@ -75,11 +76,10 @@ export default async (options: IOptions) => {
       if (exampleCall.expectedResult) {
         exampleCall.valid = isEqual(exampleCall.expectedResult, exampleCall.result);
       } else {
-        const ajv = new Ajv();
-        ajv.validate(exampleCall.resultSchema, exampleCall.result);
-        if (ajv.errors && ajv.errors.length > 0) {
+        const errors = validator(exampleCall.resultSchema, exampleCall.result);
+        if (Array.isArray(errors) && errors.length > 0) {
           exampleCall.valid = false;
-          exampleCall.reason = JSON.stringify(ajv.errors);
+          exampleCall.reason = JSON.stringify(errors);
         }
       }
     } catch (e) {
