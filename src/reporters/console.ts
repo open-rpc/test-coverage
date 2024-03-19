@@ -3,7 +3,7 @@ import {
   OpenrpcDocument,
   JSONSchemaObject,
 } from "@open-rpc/meta-schema";
-import {ExampleCall} from "../coverage";
+import type { ExampleCall } from "../coverage";
 import _ from "lodash";
 
 const getExpectedString = (ex: ExampleCall) => {
