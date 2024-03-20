@@ -18,7 +18,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@open-rpc/schema-utils-js": "^1.14.0",
+    "@open-rpc/schema-utils-js": "^1.16.2",
     "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.162",
     "ajv": "^7.0.0",
