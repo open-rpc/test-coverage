@@ -2,7 +2,7 @@ import fetch from "isomorphic-fetch";
 import { ITransport } from "./ITransport";
 let id = 1;
 
-const htttpTransport: ITransport = async (url: string, method: string, params: any[]) => {
+const httpTransport: ITransport = async (url: string, method: string, params: any[]) => {
   return fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
