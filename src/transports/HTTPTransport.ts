@@ -1,7 +1,8 @@
 import fetch from "isomorphic-fetch";
+import { ITransport } from "./ITransport";
 let id = 1;
 
-export default (url: string, method: string, params: any[]) => {
+const htttpTransport: ITransport = async (url: string, method: string, params: any[]) => {
   return fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -15,3 +16,5 @@ export default (url: string, method: string, params: any[]) => {
     return r.json();
   });
 };
+
+export default htttpTransport;
