@@ -21,7 +21,7 @@ interface IOptions {
   skip?: string[];
   only?: string[];
   reporter: "console" | "json" | "raw";
-  transport: "http" | ITransport
+  transport: "http" | ITransport;
 }
 
 export default async (options: IOptions) => {
