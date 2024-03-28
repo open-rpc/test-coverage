@@ -109,5 +109,5 @@ export default async (options: IOptions) => {
     }
   }
 
-  options.reporter(exampleCalls, options.openrpcDocument);
+  return options.reporter(exampleCalls, options.openrpcDocument);
 };

@@ -14,7 +14,7 @@
     "bin",
     "build"
   ],
-  "main": "build/coverage.js",
+  "main": "build/index.js",
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
