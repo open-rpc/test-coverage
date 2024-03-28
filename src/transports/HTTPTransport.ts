@@ -17,4 +17,4 @@ const httpTransport: ITransport = async (url: string, method: string, params: an
   });
 };
 
-export default htttpTransport;
+export default httpTransport;
