@@ -124,4 +124,45 @@ describe("coverage", () => {
       });
     });
   });
+  describe("reporter", () => {
+    // reporter integration tests
+    it("onBegin is called", async () => {
+      // this is a test that the reporter is called
+      const reporter = new EmptyReporter();
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+
+      reporter.onBegin = jest.fn();
+      await coverage(options);
+      expect(reporter.onBegin).toHaveBeenCalled();
+    });
+    it("onTestBegin is called",  async () => {
+      const reporter = new class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {}
+      };
+      const spy = jest.spyOn(reporter, "onTestBegin");
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+
+      await coverage(options);
+      expect(spy).toHaveBeenCalledTimes(11);
+    });
+  });
 });

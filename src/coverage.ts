@@ -105,6 +105,7 @@ export default async (options: IOptions) => {
   });
 
   options.reporter.onBegin(options, exampleCalls);
+
   for (const exampleCall of exampleCalls) {
     options.reporter.onTestBegin(options, exampleCall);
     try {
