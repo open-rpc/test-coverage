@@ -1,5 +1,15 @@
-import { OpenrpcDocument } from "@open-rpc/meta-schema";
+import { ExampleCall, IOptions } from '../coverage';
+import Reporter from './reporter';
 
-export default (callResults: any[], schema: OpenrpcDocument) => {
-  return callResults;
-};
+class RawReporter extends Reporter {
+  onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
+  onTestBegin(options: IOptions, exampleCall: ExampleCall) {}
+
+  onTestEnd(options: IOptions, exampleCall: ExampleCall) {}
+
+  onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
+    return exampleCalls;
+  }
+}
+
+export default RawReporter;

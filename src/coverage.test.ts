@@ -1,5 +1,6 @@
-import coverage from "./coverage";
+import coverage, { ExampleCall, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
+import EmptyReporter from "./reporters/emptyReporter";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -69,12 +70,17 @@ const mockSchema = {
 describe("coverage", () => {
   describe("reporter", () => {
     it("can call the reporter", (done) => {
-      const reporter = (callResults: any[], schema: OpenrpcDocument) => {
-        done();
-      };
+      class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {
+          done();
+        }
+      }
       const transport = () => Promise.resolve();
       coverage({
-        reporter,
+        reporter: new CustomReporter(),
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -82,15 +88,20 @@ describe("coverage", () => {
       });
     });
     it("can call the reporter with the results", (done) => {
-      const reporter = (callResults: any[], schema: OpenrpcDocument) => {
-        expect(callResults[0].result).toBe(true);
-        done();
-      };
+      class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
+          expect(exampleCalls[0].result).toBe(true);
+          done();
+        }
+      }
       const transport = async (url: string, method: string, params: any[]) => {
         return { result: true };
       };
       coverage({
-        reporter,
+        reporter: new CustomReporter(),
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -100,15 +111,12 @@ describe("coverage", () => {
   });
   describe("transport", () => {
     it("can call the transport", (done) => {
-      const reporter = () => {
-        // empty reporter
-      };
       const transport = () => {
         done();
         return Promise.resolve({});
       };
       coverage({
-        reporter,
+        reporter: new EmptyReporter(),
         transport,
         openrpcDocument: mockSchema,
         skip: [],
