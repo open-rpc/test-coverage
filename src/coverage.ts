@@ -49,7 +49,7 @@ const paramsToObj = (
 };
 
 export default async (options: IOptions) => {
-  const filteredMethods = options.openrpcDocument.methods
+  const filteredMethods = (options.openrpcDocument.methods as MethodObject[])
     .filter(({ name }) => !options.skip.includes(name))
     .filter(
       ({ name }) => options.only.length === 0 || options.only.includes(name)
@@ -58,7 +58,6 @@ export default async (options: IOptions) => {
   if (filteredMethods.length === 0) {
     throw new Error("No methods to test");
   }
-
 
   const exampleCalls: ExampleCall[] = [];
 
