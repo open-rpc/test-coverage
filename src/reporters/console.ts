@@ -18,7 +18,7 @@ const getExpectedString = (ex: ExampleCall) => {
   return ex.expectedResult ? exRes : resSchemaID;
 };
 
-class ConsoleReporter extends Reporter {
+class ConsoleReporter implements Reporter {
 
   onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
   onTestBegin(options: IOptions, exampleCall: ExampleCall) {}

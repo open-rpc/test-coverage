@@ -1,7 +1,7 @@
 import { ExampleCall, IOptions } from '../coverage';
 import Reporter from './reporter';
 
-class EmptyReporter extends Reporter {
+class EmptyReporter implements Reporter {
   onBegin(options: IOptions, exampleCalls: ExampleCall[]) {
     console.log(`Starting the run with ${exampleCalls.length} tests`);
   }

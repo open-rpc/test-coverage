@@ -1,7 +1,7 @@
 import { ExampleCall, IOptions } from '../coverage';
 import Reporter from './reporter';
 
-class JsonReporter extends Reporter {
+class JsonReporter implements Reporter {
   onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
   onTestBegin(options: IOptions, exampleCall: ExampleCall) {}
 
