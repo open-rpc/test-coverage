@@ -27,6 +27,7 @@ const mockSchema = {
     },
     {
       name: "bar",
+      paramStructure: "by-name",
       params: [
         {
           name: "barParam",
@@ -45,6 +46,54 @@ const mockSchema = {
       ],
       result: {
         name: "barResult",
+        schema: {
+          type: "boolean",
+        },
+      },
+      examples: [
+        {
+          name: "fooExample",
+          summary: "foo example",
+          description: "this is an example of foo",
+          params: [
+            {
+              name: "barParam",
+              value: "bar",
+            },
+            {
+              name: "barParam2",
+              value: "bar",
+            }
+          ],
+          result: {
+            name: "fooResult",
+            schema: {
+              type: "boolean",
+            },
+          },
+        },
+      ],
+    },
+    {
+      name: "baz",
+      params: [
+        {
+          name: "bazParam",
+          required: true,
+          schema: {
+            type: "string",
+            enum: ["baz"],
+          },
+        },
+        {
+          name: "bazParam2",
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      result: {
+        name: "bazResult",
         schema: {
           type: "boolean",
         },
@@ -109,6 +158,29 @@ describe("coverage", () => {
       });
     });
   });
+  describe("coverage tests", () => {
+    it("throws an error when there are no methods", async () => {
+      const reporter = new class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {}
+      };
+      const spy = jest.spyOn(reporter, "onTestBegin");
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: ['foo', 'bar', 'baz'],
+        only: [],
+      };
+
+      await coverage(options);
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+  });
   describe("transport", () => {
     it("can call the transport", (done) => {
       const transport = () => {
@@ -124,7 +196,7 @@ describe("coverage", () => {
       });
     });
   });
-  describe("reporter", () => {
+  describe("reporter more tests", () => {
     // reporter integration tests
     it("onBegin is called", async () => {
       // this is a test that the reporter is called
@@ -162,7 +234,7 @@ describe("coverage", () => {
       };
 
       await coverage(options);
-      expect(spy).toHaveBeenCalledTimes(11);
+      expect(spy).toHaveBeenCalledTimes(12);
     });
   });
 });

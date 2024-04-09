@@ -68,6 +68,7 @@ export default async (options: IOptions) => {
   servers.forEach(({ url }) => {
     filteredMethods.forEach((method) => {
       if (method.examples === undefined || method.examples.length === 0) {
+        console.log("method : ", method);
         for (let i = 0; i < 10; i++) {
           const p = getFakeParams(method.params);
           // handle object or array case
@@ -92,6 +93,7 @@ export default async (options: IOptions) => {
           method.paramStructure === "by-name"
             ? paramsToObj(p, method.params as ContentDescriptorObject[])
             : p;
+        console.log("params : ", params);
         exampleCalls.push({
           title: method.name + " > example params and expect result to match: " + ex.name,
           methodName: method.name,
