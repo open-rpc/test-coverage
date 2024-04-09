@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "description": "Test your OpenRPC Document against an API.",
   "scripts": {
-    "lint": "tslint --fix -p .",
+    "lint": "eslint",
     "test": "jest --coverage && npm run lint",
     "build": "tsc"
   },
@@ -30,11 +30,9 @@
   },
   "devDependencies": {
     "@open-rpc/meta-schema": "^1.13.13",
-    "@types/jest": "^26.0.0",
-    "@types/node": "^16.0.0",
+    "eslint": "^8.57.0",
     "jest": "^25.1.0",
-    "ts-jest": "^25.0.0",
-    "tslint": "^6.0.0",
-    "typescript": "^3.4.3"
+    "typescript": "^5.4.4",
+    "typescript-eslint": "^7.6.0"
   }
 }
