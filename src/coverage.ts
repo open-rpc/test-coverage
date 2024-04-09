@@ -5,7 +5,8 @@ import {
   JSONSchema,
   ContentDescriptorObject,
   Servers,
-  MethodObjectParams
+  MethodObjectParams,
+  MethodObject
 } from "@open-rpc/meta-schema";
 const jsf = require("json-schema-faker"); // tslint:disable-line
 import Ajv from "ajv";
@@ -43,9 +44,9 @@ const paramsToObj = (params: any[], methodParams: ContentDescriptorObject[]): an
 }
 
 export default async (options: IOptions) => {
-  const filteredMethods = options.openrpcDocument.methods
-    .filter(({name}) => !options.skip.includes(name))
-    .filter(({name}) => options.only.length === 0 || options.only.includes(name));
+  const filteredMethods = (options.openrpcDocument.methods as MethodObject[])
+    .filter(({ name }) => !options.skip.includes(name))
+    .filter(({ name }) => options.only.length === 0 || options.only.includes(name));
 
   if (filteredMethods.length === 0) {
     throw new Error("No methods to test");
@@ -53,9 +54,9 @@ export default async (options: IOptions) => {
 
   const exampleCalls: ExampleCall[] = [];
 
-  const servers: Servers = (options.openrpcDocument.servers || [{url: "http://localhost:3333"}]);
+  const servers: Servers = (options.openrpcDocument.servers || [{ url: "http://localhost:3333" }]);
 
-  servers.forEach(({url}) => {
+  servers.forEach(({ url }) => {
     filteredMethods.forEach((method) => {
       if (method.examples === undefined || method.examples.length === 0) {
         for (let i = 0; i < 10; i++) {
