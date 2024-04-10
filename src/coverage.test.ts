@@ -1,5 +1,6 @@
-import coverage from "./coverage";
+import coverage, { ExampleCall, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
+import EmptyReporter from "./reporters/emptyReporter";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -26,6 +27,7 @@ const mockSchema = {
     },
     {
       name: "bar",
+      paramStructure: "by-name",
       params: [
         {
           name: "barParam",
@@ -53,12 +55,58 @@ const mockSchema = {
           name: "fooExample",
           summary: "foo example",
           description: "this is an example of foo",
-          params: [],
+          params: [
+            {
+              name: "barParam",
+              value: "bar",
+            },
+            {
+              name: "barParam2",
+              value: "bar",
+            }
+          ],
           result: {
             name: "fooResult",
             schema: {
               type: "boolean",
             },
+          },
+        },
+      ],
+    },
+    {
+      name: "baz",
+      params: [
+        {
+          name: "bazParam",
+          required: true,
+          schema: {
+            type: "string",
+            enum: ["baz"],
+          },
+        },
+        {
+          name: "bazParam2",
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      result: {
+        name: "bazResult",
+        schema: {
+          type: "boolean",
+        },
+      },
+      examples: [
+        {
+          name: "fooExample",
+          summary: "foo example",
+          description: "this is an example of foo",
+          params: [],
+          result: {
+            name: "fooResult",
+            value: true,
           },
         },
       ],
@@ -69,12 +117,17 @@ const mockSchema = {
 describe("coverage", () => {
   describe("reporter", () => {
     it("can call the reporter", (done) => {
-      const reporter = (callResults: any[], schema: OpenrpcDocument) => {
-        done();
-      };
+      class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {
+          done();
+        }
+      }
       const transport = () => Promise.resolve();
       coverage({
-        reporter,
+        reporter: new CustomReporter(),
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -82,15 +135,20 @@ describe("coverage", () => {
       });
     });
     it("can call the reporter with the results", (done) => {
-      const reporter = (callResults: any[], schema: OpenrpcDocument) => {
-        expect(callResults[0].result).toBe(true);
-        done();
-      };
+      class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
+          expect(exampleCalls[0].result).toBe(true);
+          done();
+        }
+      }
       const transport = async (url: string, method: string, params: any[]) => {
         return { result: true };
       };
       coverage({
-        reporter,
+        reporter: new CustomReporter(),
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -98,22 +156,103 @@ describe("coverage", () => {
       });
     });
   });
+  describe("coverage tests", () => {
+    it("throws an error when there are no methods", async () => {
+      const reporter = new class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {}
+      };
+      const spy = jest.spyOn(reporter, "onTestBegin");
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: ['foo', 'bar', 'baz'],
+        only: [],
+      };
+
+      await expect(coverage(options)).rejects.toThrow('No methods to test');
+    });
+    it("can get to expectedResult checking with no servers", async () => {
+      const reporter = new class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {}
+      };
+      const spy = jest.spyOn(reporter, "onTestBegin");
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = {...mockSchema};
+      openrpcDocument.servers = undefined;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: ['baz'],
+      };
+
+      await expect(coverage(options)).resolves.toBeUndefined();
+    });
+  });
   describe("transport", () => {
     it("can call the transport", (done) => {
-      const reporter = () => {
-        // empty reporter
-      };
       const transport = () => {
         done();
         return Promise.resolve({});
       };
       coverage({
-        reporter,
+        reporter: new EmptyReporter(),
         transport,
         openrpcDocument: mockSchema,
         skip: [],
         only: [],
       });
+    });
+  });
+  describe("reporter more tests", () => {
+    // reporter integration tests
+    it("onBegin is called", async () => {
+      // this is a test that the reporter is called
+      const reporter = new EmptyReporter();
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+
+      reporter.onBegin = jest.fn();
+      await coverage(options);
+      expect(reporter.onBegin).toHaveBeenCalled();
+    });
+    it("onTestBegin is called",  async () => {
+      const reporter = new class CustomReporter {
+        onBegin() {}
+        onTestBegin() {}
+        onTestEnd() {}
+        onEnd() {}
+      };
+      const spy = jest.spyOn(reporter, "onTestBegin");
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const options = {
+        reporter,
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+
+      await coverage(options);
+      expect(spy).toHaveBeenCalledTimes(12);
     });
   });
 });
