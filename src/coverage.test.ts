@@ -260,7 +260,6 @@ describe("coverage", () => {
       const reporter2 = new EmptyReporter();
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
-      console.log(mockSchema);
 
       const onBeginSpy = jest.spyOn(reporter, "onBegin");
       const onTestBeginSpy = jest.spyOn(reporter, "onTestBegin");
