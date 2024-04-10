@@ -17,19 +17,23 @@ const reporters = {
 const transports = {
   http: HTTPTransport,
 };
-
+type ReporterString = "console" | "json" | "raw" | "empty";
 interface IOptions {
   openrpcDocument: OpenrpcDocument;
   skip?: string[];
   only?: string[];
-  reporter: "console" | "json" | "raw" | "empty";
+  reporters: ReporterString[];
   transport: "http" | ITransport;
 }
 
 export default async (options: IOptions) => {
   const transport = typeof options.transport === "function" ? options.transport : transports[options.transport || "http"];
+  let reporterInstances = options.reporters.map((reporter) => new reporters[reporter]);
+  if (reporterInstances.length === 0) {
+    reporterInstances = [new reporters["console"]()];
+  }
   return coverage({
-    reporter: new reporters[options.reporter || "console"],
+    reporters: reporterInstances,
     openrpcDocument: options.openrpcDocument,
     skip: options.skip || [],
     only: options.only || [],

@@ -127,7 +127,7 @@ describe("coverage", () => {
       }
       const transport = () => Promise.resolve();
       coverage({
-        reporter: new CustomReporter(),
+        reporters: [new CustomReporter()],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -148,7 +148,7 @@ describe("coverage", () => {
         return { result: true };
       };
       coverage({
-        reporter: new CustomReporter(),
+        reporters: [new CustomReporter()],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -168,7 +168,7 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: ['foo', 'bar', 'baz'],
@@ -189,14 +189,14 @@ describe("coverage", () => {
       const openrpcDocument = {...mockSchema};
       openrpcDocument.servers = undefined;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],
         only: ['baz'],
       };
 
-      await expect(coverage(options)).resolves.toBeUndefined();
+      await expect(coverage(options)).resolves.toBeDefined();
     });
   });
   describe("transport", () => {
@@ -206,7 +206,7 @@ describe("coverage", () => {
         return Promise.resolve({});
       };
       coverage({
-        reporter: new EmptyReporter(),
+        reporters: [new EmptyReporter()],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -222,7 +222,7 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],
@@ -244,7 +244,7 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],

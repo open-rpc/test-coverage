@@ -22,7 +22,7 @@ export interface IOptions {
   skip: string[];
   only: string[];
   transport(url: string, method: string, params: any[]): PromiseLike<any>;
-  reporter: Reporter;
+  reporters: Reporter[];
 }
 
 export interface ExampleCall {
@@ -104,10 +104,14 @@ export default async (options: IOptions) => {
     });
   });
 
-  options.reporter.onBegin(options, exampleCalls);
+  for (const reporter of options.reporters) {
+    reporter.onBegin(options, exampleCalls);
+  }
 
   for (const exampleCall of exampleCalls) {
-    options.reporter.onTestBegin(options, exampleCall);
+    for (const reporter of options.reporters) {
+      reporter.onTestBegin(options, exampleCall);
+    }
     try {
       const callResult = await options.transport(
         exampleCall.url,
@@ -135,8 +139,13 @@ export default async (options: IOptions) => {
       exampleCall.valid = false;
       exampleCall.requestError = e;
     }
-    options.reporter.onTestEnd(options, exampleCall);
+    for (const reporter of options.reporters) {
+      reporter.onTestEnd(options, exampleCall);
+    }
   }
 
-  return options.reporter.onEnd(options, exampleCalls);
+  for (const reporter of options.reporters) {
+    reporter.onEnd(options, exampleCalls);
+  }
+  return exampleCalls;
 };
