@@ -4,20 +4,18 @@ import { OpenrpcDocument } from "@open-rpc/meta-schema";
 import { ITransport } from "./transports/ITransport";
 import ConsoleReporter from "./reporters/console";
 import JsonReporter from "./reporters/json";
-import RawReporter from "./reporters/raw";
 import EmptyReporter from "./reporters/emptyReporter";
 
 const reporters = {
   console: ConsoleReporter,
   json: JsonReporter,
-  raw: RawReporter,
   empty: EmptyReporter,
 };
 
 const transports = {
   http: HTTPTransport,
 };
-type ReporterString = "console" | "json" | "raw" | "empty";
+type ReporterString = "console" | "json" | "empty";
 interface IOptions {
   openrpcDocument: OpenrpcDocument;
   skip?: string[];
