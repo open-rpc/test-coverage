@@ -1,6 +1,7 @@
 import coverage, { ExampleCall, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
 import EmptyReporter from "./reporters/emptyReporter";
+import ConsoleReporter from "./reporters/console";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -127,7 +128,7 @@ describe("coverage", () => {
       }
       const transport = () => Promise.resolve();
       coverage({
-        reporter: new CustomReporter(),
+        reporters: [new CustomReporter()],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -148,7 +149,7 @@ describe("coverage", () => {
         return { result: true };
       };
       coverage({
-        reporter: new CustomReporter(),
+        reporters: [new CustomReporter()],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -168,7 +169,7 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: ['foo', 'bar', 'baz'],
@@ -189,14 +190,14 @@ describe("coverage", () => {
       const openrpcDocument = {...mockSchema};
       openrpcDocument.servers = undefined;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],
         only: ['baz'],
       };
 
-      await expect(coverage(options)).resolves.toBeUndefined();
+      await expect(coverage(options)).resolves.toBeDefined();
     });
   });
   describe("transport", () => {
@@ -206,7 +207,7 @@ describe("coverage", () => {
         return Promise.resolve({});
       };
       coverage({
-        reporter: new EmptyReporter(),
+        reporters: [new EmptyReporter()],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
@@ -222,7 +223,7 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],
@@ -244,7 +245,7 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
-        reporter,
+        reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],
@@ -254,5 +255,40 @@ describe("coverage", () => {
       await coverage(options);
       expect(spy).toHaveBeenCalledTimes(12);
     });
+    it("can handle multiple reporters", async () => {
+      const reporter = new EmptyReporter();
+      const reporter2 = new EmptyReporter();
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+
+      const onBeginSpy = jest.spyOn(reporter, "onBegin");
+      const onTestBeginSpy = jest.spyOn(reporter, "onTestBegin");
+      const onTestEndSpy = jest.spyOn(reporter, "onTestEnd");
+      const onEndSpy = jest.spyOn(reporter, "onEnd");
+
+      const onBeginSpy2 = jest.spyOn(reporter2, "onBegin");
+      const onTestBeginSpy2 = jest.spyOn(reporter2, "onTestBegin");
+      const onTestEndSpy2 = jest.spyOn(reporter2, "onTestEnd");
+      const onEndSpy2 = jest.spyOn(reporter2, "onEnd");
+
+      const options = {
+        reporters: [reporter, reporter2],
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+      await coverage(options);
+
+      expect(onBeginSpy).toHaveBeenCalledTimes(1);
+      expect(onTestBeginSpy).toHaveBeenCalledTimes(12);
+      expect(onTestEndSpy).toHaveBeenCalledTimes(12);
+      expect(onEndSpy).toHaveBeenCalledTimes(1);
+
+      expect(onBeginSpy2).toHaveBeenCalledTimes(1);
+      expect(onTestBeginSpy2).toHaveBeenCalledTimes(12);
+      expect(onTestEndSpy2).toHaveBeenCalledTimes(12);
+      expect(onEndSpy2).toHaveBeenCalledTimes(1);
+    })
   });
 });

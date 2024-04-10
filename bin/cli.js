@@ -3,7 +3,7 @@ const program = require('commander');
 const orpcCoverage = require('../build').default;
 const { parseOpenRPCDocument } = require('@open-rpc/schema-utils-js');
 
-const getMethodsArray = (input) => {
+const getArrayFromCommaSeparated = (input) => {
   if (input && input.split(',').length > 0) {
     return input.split(',');
   } else {
@@ -15,10 +15,10 @@ program
   .version(require('./get-version'))
   .usage('[options]')
   .option('-s, --schema [schema]', 'JSON string or a Path/Url pointing to an open rpc schema')
-  .option('-r, --reporter <reporter>', 'Use the specified reporter [console] [json] [empty]')
+  .option('-r, --reporters <reporters>', 'Use the specified reporter [console] [json] [empty]. Can be a comma separated list of reporters.')
   .option('-t, --transport <transport>', 'Use the specified transport [http]')
-  .option('--skip <skip>', 'Methods to skip')
-  .option('--only <only>', 'Methods to only run')
+  .option('--skip <skip>', 'Methods to skip. Comma separated list of method names')
+  .option('--only <only>', 'Methods to only run. Comma separated list of method names')
   .action(async (options) => {
     let schema;
     try {
@@ -32,9 +32,9 @@ program
       await orpcCoverage({
         openrpcDocument: schema,
         transport: options.transport,
-        reporter: options.reporter,
-        skip: getMethodsArray(options.skip),
-        only: getMethodsArray(options.only),
+        reporters: getArrayFromCommaSeparated(options.reporters),
+        skip: getArrayFromCommaSeparated(options.skip),
+        only: getArrayFromCommaSeparated(options.only),
       });
     } catch (e) {
       console.error(e);
