@@ -64,7 +64,7 @@ export default async (options: IOptions) => {
     for (const reporter of options.reporters) {
       reporter.onTestBegin(options, exampleCall);
     }
-    // lifecycle methods could be an async or sync
+    // lifecycle methods could be async or sync
     const maybePromise = exampleCall.rule?.beforeRequest(options, exampleCall);
     if (maybePromise instanceof Promise) {
       await maybePromise;
