@@ -13,11 +13,10 @@ class Rule {
   onEnd(options: IOptions, exampleCalls: ExampleCall[]) {}
 
   // example call lifecycle
-  beforeRequest(options: IOptions, exampleCall: ExampleCall) {}
-  afterRequest(options: IOptions, exampleCall: ExampleCall) {}
+  beforeRequest(options: IOptions, exampleCall: ExampleCall): Promise<any> | void {}
+  afterRequest(options: IOptions, exampleCall: ExampleCall): Promise<any> | void {}
 
-  beforeResponse(options: IOptions, exampleCall: ExampleCall) {}
-  afterResponse(options: IOptions, exampleCall: ExampleCall) {}
+  afterResponse(options: IOptions, exampleCall: ExampleCall): Promise<any> | void {}
 }
 
 export default Rule;

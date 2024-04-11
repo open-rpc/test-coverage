@@ -6,11 +6,14 @@ import {
 import Reporter from "./reporters/emptyReporter";
 import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
 import ExamplesRule from "./rules/examples-rule";
+import Rule from "./rules/rule";
+import { set } from "lodash";
 
 export interface IOptions {
   openrpcDocument: OpenrpcDocument;
   skip: string[];
   only: string[];
+  rules?: Rule[];
   transport(url: string, method: string, params: any[]): PromiseLike<any>;
   reporters: Reporter[];
 }
@@ -26,6 +29,7 @@ export interface ExampleCall {
   expectedResult?: any;
   requestError?: any;
   title: string;
+  rule?: Rule;
 }
 
 export default async (options: IOptions) => {
@@ -41,12 +45,15 @@ export default async (options: IOptions) => {
 
   let exampleCalls: ExampleCall[] = [];
 
-  const rules = [new JsonSchemaFakerRule(), new ExamplesRule()];
+  let rules = [new JsonSchemaFakerRule(), new ExamplesRule()];
+  if (options.rules) {
+    rules = options.rules;
+  }
 
   filteredMethods.forEach((method) => {
     rules.forEach((rule) =>
       rule.getExampleCalls(options.openrpcDocument, method)
-        .forEach((exampleCall) => exampleCalls.push(exampleCall))
+        .forEach((exampleCall) => exampleCalls.push({...exampleCall, rule}))
     );
   });
 
@@ -58,17 +65,35 @@ export default async (options: IOptions) => {
     for (const reporter of options.reporters) {
       reporter.onTestBegin(options, exampleCall);
     }
+    // lifecycle methods could be an async or sync
+    const maybePromise = exampleCall.rule?.beforeRequest(options, exampleCall);
+    if (maybePromise instanceof Promise) {
+      await maybePromise;
+    }
+
+    const callResultPromise = options.transport(
+      exampleCall.url,
+      exampleCall.methodName,
+      exampleCall.params
+    );
+    const maybeAfterRequestPromise = exampleCall.rule?.afterRequest(options, exampleCall);
+    if (maybeAfterRequestPromise instanceof Promise) {
+      await maybeAfterRequestPromise;
+    }
     try {
-      const callResult = await options.transport(
-        exampleCall.url,
-        exampleCall.methodName,
-        exampleCall.params
-      );
+      const callResult = await callResultPromise;
       exampleCall.result = callResult.result;
-      rules.forEach((rule) => rule.validateExampleCall(exampleCall));
+      const maybeValidateExampleCallPromise = exampleCall.rule?.validateExampleCall(exampleCall);
+      if (maybeValidateExampleCallPromise instanceof Promise) {
+        await maybeValidateExampleCallPromise;
+      }
     } catch (e) {
       exampleCall.valid = false;
       exampleCall.requestError = e;
+    }
+    const maybeAfterResponsePromise = exampleCall.rule?.afterResponse(options, exampleCall);
+    if (maybeAfterResponsePromise instanceof Promise) {
+      await maybeAfterResponsePromise;
     }
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, exampleCall);

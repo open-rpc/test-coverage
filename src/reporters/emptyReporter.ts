@@ -7,6 +7,7 @@ class EmptyReporter implements Reporter {
   }
 
   onTestBegin(options: IOptions, exampleCall: ExampleCall) {
+    console.log(`started test ${exampleCall.title}`);
   }
 
   onTestEnd(options: IOptions, exampleCall: ExampleCall) {

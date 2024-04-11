@@ -5,6 +5,7 @@ import { ITransport } from "./transports/ITransport";
 import ConsoleReporter from "./reporters/console";
 import JsonReporter from "./reporters/json";
 import EmptyReporter from "./reporters/emptyReporter";
+import Rule from "./rules/rule";
 
 const reporters = {
   console: ConsoleReporter,
@@ -21,6 +22,7 @@ interface IOptions {
   skip?: string[];
   only?: string[];
   reporters: ReporterString[];
+  rules?: Rule[];
   transport: "http" | ITransport;
 }
 
@@ -32,6 +34,7 @@ export default async (options: IOptions) => {
   }
   return coverage({
     reporters: reporterInstances,
+    rules: options.rules || [],
     openrpcDocument: options.openrpcDocument,
     skip: options.skip || [],
     only: options.only || [],

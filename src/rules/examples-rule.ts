@@ -11,9 +11,26 @@ const paramsToObj = (
     return acc;
   }, {});
 };
+interface RulesOptions {
+  skip: string[];
+  only: string[];
+}
+
 class ExamplesRule {
+  private skip?: string[];
+  private only?: string[];
+  constructor(options?: RulesOptions) {
+    this.skip = options?.skip;
+    this.only = options?.only;
+  }
   onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
   getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
+    if (this.skip && this.skip.includes(method.name)) {
+      return [];
+    }
+    if (this.only && this.only.length > 0 && !this.only.includes(method.name)) {
+      return [];
+    }
     const exampleCalls: ExampleCall[] = [];
     if (method.examples) {
       (method.examples as ExamplePairingObject[]).forEach((ex) => {
@@ -52,7 +69,6 @@ class ExamplesRule {
   beforeRequest(options: IOptions, exampleCall: ExampleCall) {}
   afterRequest(options: IOptions, exampleCall: ExampleCall) {}
 
-  beforeResponse(options: IOptions, exampleCall: ExampleCall) {}
   afterResponse(options: IOptions, exampleCall: ExampleCall) {}
 }
 

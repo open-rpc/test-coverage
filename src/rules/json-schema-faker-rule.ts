@@ -1,6 +1,7 @@
 import { ContentDescriptorObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
 import { ExampleCall, IOptions } from "../coverage";
 import Ajv from "ajv";
+import Rule from "./rule";
 
 const jsf = require("json-schema-faker"); // tslint:disable-line
 
@@ -17,10 +18,26 @@ const paramsToObj = (
     return acc;
   }, {});
 };
-
-class JsonSchemaFakerRule {
+interface RulesOptions {
+  skip: string[];
+  only: string[];
+}
+class JsonSchemaFakerRule extends Rule {
+  private skip?: string[];
+  private only?: string[];
+  constructor(options?: RulesOptions) {
+    super();
+    this.skip = options?.skip;
+    this.only = options?.only;
+  }
   onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
   getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
+    if (this.skip && this.skip.includes(method.name)) {
+      return [];
+    }
+    if (this.only && this.only.length > 0 && !this.only.includes(method.name)) {
+      return [];
+    }
     const url = openrpcDocument.servers ? openrpcDocument.servers[0].url : "";
     const exampleCalls: ExampleCall[] = [];
     if (method.examples === undefined || method.examples.length === 0) {
@@ -51,16 +68,14 @@ class JsonSchemaFakerRule {
     } else {
       exampleCall.valid = true;
     }
-    exampleCall.valid = true;
     return exampleCall;
   }
   onEnd(options: IOptions, exampleCalls: ExampleCall[]) {}
 
   // example call lifecycle
-  beforeRequest(options: IOptions, exampleCall: ExampleCall) {}
-  afterRequest(options: IOptions, exampleCall: ExampleCall) {}
+  async beforeRequest(options: IOptions, exampleCall: ExampleCall) {}
+  async afterRequest(options: IOptions, exampleCall: ExampleCall) {}
 
-  beforeResponse(options: IOptions, exampleCall: ExampleCall) {}
   afterResponse(options: IOptions, exampleCall: ExampleCall) {}
 }
 

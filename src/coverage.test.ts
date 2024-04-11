@@ -201,18 +201,16 @@ describe("coverage", () => {
     });
   });
   describe("transport", () => {
-    it("can call the transport", (done) => {
-      const transport = () => {
-        done();
-        return Promise.resolve({});
-      };
-      coverage({
+    it("can call the transport", async () => {
+      const transport = jest.fn();
+      await coverage({
         reporters: [new EmptyReporter()],
         transport,
-        openrpcDocument: mockSchema,
+        openrpcDocument: { openrpc: '1.2.6', info: { title: 'f', version: '0.0.0'}, methods: [mockSchema.methods[0]] },
         skip: [],
         only: [],
       });
+      await expect(transport).toHaveBeenCalled();
     });
   });
   describe("reporter more tests", () => {
