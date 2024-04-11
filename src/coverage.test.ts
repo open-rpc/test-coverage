@@ -4,6 +4,7 @@ import EmptyReporter from "./reporters/emptyReporter";
 import ConsoleReporter from "./reporters/console";
 import Rule from "./rules/rule";
 import ExamplesRule from "./rules/examples-rule";
+import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -123,7 +124,8 @@ describe("coverage", () => {
       const reporter = new EmptyReporter();
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
-      const exampleRule = new ExamplesRule({ skip: [], only: [] });
+      const exampleRule = new ExamplesRule({ skip: ['foo'], only: ['baz'] });
+      const jsonSchemaFakerRule = new JsonSchemaFakerRule({ skip: ['baz'], only: ['foo', 'bar'] });
       class MyCustomRule extends Rule {
         getExampleCalls(openrpcDocument: OpenrpcDocument, method: any) {
           return [];
@@ -145,9 +147,10 @@ describe("coverage", () => {
 
       const getExampleCallsSpy = jest.spyOn(exampleRule, "getExampleCalls");
       const getExampleCallsCustomSpy = jest.spyOn(myCustomRule, "getExampleCalls");
+      const getExampleCallsJsonSchemaFakerSpy = jest.spyOn(jsonSchemaFakerRule, "getExampleCalls");
       const options = {
         reporters: [reporter],
-        rules: [exampleRule, myCustomRule],
+        rules: [exampleRule, myCustomRule, jsonSchemaFakerRule],
         transport,
         openrpcDocument,
         skip: [],
@@ -155,6 +158,8 @@ describe("coverage", () => {
       };
       await coverage(options);
       expect(getExampleCallsSpy).toHaveBeenCalled();
+      expect(getExampleCallsCustomSpy).toHaveBeenCalled();
+      expect(getExampleCallsJsonSchemaFakerSpy).toHaveBeenCalled();
     });
   });
   describe("reporter", () => {
