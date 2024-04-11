@@ -7,7 +7,6 @@ import Reporter from "./reporters/emptyReporter";
 import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
 import ExamplesRule from "./rules/examples-rule";
 import Rule from "./rules/rule";
-import { set } from "lodash";
 
 export interface IOptions {
   openrpcDocument: OpenrpcDocument;
