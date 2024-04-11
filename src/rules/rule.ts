@@ -6,7 +6,7 @@ class Rule {
   getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
     return [];
   }
-  validateExampleCall(exampleCall: ExampleCall): ExampleCall {
+  validateExampleCall(exampleCall: ExampleCall): Promise<ExampleCall> | ExampleCall {
     exampleCall.valid = true;
     return exampleCall;
   }

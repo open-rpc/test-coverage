@@ -44,7 +44,7 @@ export default async (options: IOptions) => {
 
   let exampleCalls: ExampleCall[] = [];
 
-  let rules = [new JsonSchemaFakerRule(), new ExamplesRule()];
+  let rules: Rule[] = [new JsonSchemaFakerRule(), new ExamplesRule()];
   if (options.rules) {
     rules = options.rules;
   }
@@ -65,35 +65,23 @@ export default async (options: IOptions) => {
       reporter.onTestBegin(options, exampleCall);
     }
     // lifecycle methods could be async or sync
-    const maybePromise = exampleCall.rule?.beforeRequest(options, exampleCall);
-    if (maybePromise instanceof Promise) {
-      await maybePromise;
-    }
+    await Promise.resolve(exampleCall.rule?.beforeRequest(options, exampleCall));
 
     const callResultPromise = options.transport(
       exampleCall.url,
       exampleCall.methodName,
       exampleCall.params
     );
-    const maybeAfterRequestPromise = exampleCall.rule?.afterRequest(options, exampleCall);
-    if (maybeAfterRequestPromise instanceof Promise) {
-      await maybeAfterRequestPromise;
-    }
+    await Promise.resolve(exampleCall.rule?.afterRequest(options, exampleCall));
     try {
       const callResult = await callResultPromise;
       exampleCall.result = callResult.result;
-      const maybeValidateExampleCallPromise = exampleCall.rule?.validateExampleCall(exampleCall);
-      if (maybeValidateExampleCallPromise instanceof Promise) {
-        await maybeValidateExampleCallPromise;
-      }
+      await Promise.resolve(exampleCall.rule?.validateExampleCall(exampleCall));
     } catch (e) {
       exampleCall.valid = false;
       exampleCall.requestError = e;
     }
-    const maybeAfterResponsePromise = exampleCall.rule?.afterResponse(options, exampleCall);
-    if (maybeAfterResponsePromise instanceof Promise) {
-      await maybeAfterResponsePromise;
-    }
+    await Promise.resolve(exampleCall.rule?.afterResponse(options, exampleCall));
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, exampleCall);
     }

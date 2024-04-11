@@ -2,6 +2,8 @@ import coverage, { ExampleCall, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
 import EmptyReporter from "./reporters/emptyReporter";
 import ConsoleReporter from "./reporters/console";
+import Rule from "./rules/rule";
+import ExamplesRule from "./rules/examples-rule";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -116,6 +118,45 @@ const mockSchema = {
 } as OpenrpcDocument;
 
 describe("coverage", () => {
+  describe("rules", () => {
+    it("can call multiple rules with different async or sync lifecycle functions", async () => {
+      const reporter = new EmptyReporter();
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const exampleRule = new ExamplesRule({ skip: [], only: [] });
+      class MyCustomRule extends Rule {
+        getExampleCalls(openrpcDocument: OpenrpcDocument, method: any) {
+          return [];
+        }
+        async validateExampleCall(exampleCall: ExampleCall) {
+          return exampleCall;
+        }
+        async beforeRequest(options: IOptions, exampleCall: ExampleCall) {
+          return;
+        }
+        async afterRequest(options: IOptions, exampleCall: ExampleCall) {
+          return;
+        }
+        async afterResponse(options: IOptions, exampleCall: ExampleCall) {
+          return;
+        }
+      }
+      const myCustomRule = new MyCustomRule();
+
+      const getExampleCallsSpy = jest.spyOn(exampleRule, "getExampleCalls");
+      const getExampleCallsCustomSpy = jest.spyOn(myCustomRule, "getExampleCalls");
+      const options = {
+        reporters: [reporter],
+        rules: [exampleRule, myCustomRule],
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+      await coverage(options);
+      expect(getExampleCallsSpy).toHaveBeenCalled();
+    });
+  });
   describe("reporter", () => {
     it("can call the reporter", (done) => {
       class CustomReporter {
