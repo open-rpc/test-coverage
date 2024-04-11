@@ -1,22 +1,15 @@
 import { ContentDescriptorObject, ExampleObject, ExamplePairingObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
 import { ExampleCall, IOptions } from "../coverage";
 import { isEqual } from "lodash";
+import Rule from "./rule";
+import paramsToObj from "../utils/params-to-obj";
 
-const paramsToObj = (
-  params: any[],
-  methodParams: ContentDescriptorObject[]
-): any => {
-  return params.reduce((acc, val, i) => {
-    acc[methodParams[i].name] = val;
-    return acc;
-  }, {});
-};
 interface RulesOptions {
   skip: string[];
   only: string[];
 }
 
-class ExamplesRule {
+class ExamplesRule implements Rule {
   private skip?: string[];
   private only?: string[];
   constructor(options?: RulesOptions) {

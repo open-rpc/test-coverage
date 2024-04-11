@@ -2,6 +2,7 @@ import { ContentDescriptorObject, MethodObject, OpenrpcDocument } from "@open-rp
 import { ExampleCall, IOptions } from "../coverage";
 import Ajv from "ajv";
 import Rule from "./rule";
+import paramsToObj from "../utils/params-to-obj";
 
 const jsf = require("json-schema-faker"); // tslint:disable-line
 
@@ -9,24 +10,14 @@ const getFakeParams = (params: any[]): any[] => {
   return params.map((p) => jsf.generate(p.schema));
 };
 
-const paramsToObj = (
-  params: any[],
-  methodParams: ContentDescriptorObject[]
-): any => {
-  return params.reduce((acc, val, i) => {
-    acc[methodParams[i].name] = val;
-    return acc;
-  }, {});
-};
 interface RulesOptions {
   skip: string[];
   only: string[];
 }
-class JsonSchemaFakerRule extends Rule {
+class JsonSchemaFakerRule implements Rule {
   private skip?: string[];
   private only?: string[];
   constructor(options?: RulesOptions) {
-    super();
     this.skip = options?.skip;
     this.only = options?.only;
   }
