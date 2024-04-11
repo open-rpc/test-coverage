@@ -82,11 +82,11 @@ export default async (options: IOptions) => {
       const callResult = await callResultPromise;
       exampleCall.result = callResult.result;
       exampleCall.error = callResult.error;
-      await Promise.resolve(exampleCall.rule?.validateExampleCall?.(exampleCall));
     } catch (e) {
       exampleCall.valid = false;
       exampleCall.requestError = e;
     }
+    exampleCall.requestError ?? await Promise.resolve(exampleCall.rule?.validateExampleCall?.(exampleCall));
     await Promise.resolve(exampleCall.rule?.afterResponse?.(options, exampleCall));
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, exampleCall);
