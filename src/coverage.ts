@@ -27,6 +27,11 @@ export interface ExampleCall {
   resultSchema: JSONSchema;
   expectedResult?: any;
   requestError?: any;
+  error?: {
+    message: string;
+    code: number;
+    data: any;
+  };
   title: string;
   rule?: Rule;
 }
@@ -65,23 +70,24 @@ export default async (options: IOptions) => {
       reporter.onTestBegin(options, exampleCall);
     }
     // lifecycle methods could be async or sync
-    await Promise.resolve(exampleCall.rule?.beforeRequest(options, exampleCall));
+    await Promise.resolve(exampleCall.rule?.beforeRequest?.(options, exampleCall));
 
     const callResultPromise = options.transport(
       exampleCall.url,
       exampleCall.methodName,
       exampleCall.params
     );
-    await Promise.resolve(exampleCall.rule?.afterRequest(options, exampleCall));
+    await Promise.resolve(exampleCall.rule?.afterRequest?.(options, exampleCall));
     try {
       const callResult = await callResultPromise;
       exampleCall.result = callResult.result;
-      await Promise.resolve(exampleCall.rule?.validateExampleCall(exampleCall));
+      exampleCall.error = callResult.error;
+      await Promise.resolve(exampleCall.rule?.validateExampleCall?.(exampleCall));
     } catch (e) {
       exampleCall.valid = false;
       exampleCall.requestError = e;
     }
-    await Promise.resolve(exampleCall.rule?.afterResponse(options, exampleCall));
+    await Promise.resolve(exampleCall.rule?.afterResponse?.(options, exampleCall));
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, exampleCall);
     }
