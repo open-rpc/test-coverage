@@ -134,8 +134,8 @@ describe("coverage", () => {
         getCalls(openrpcDocument: OpenrpcDocument, method: any) {
           return [];
         }
-        async validateCall(Call: Call) {
-          return Call;
+        async validateCall(call: Call) {
+          return call;
         }
       }
       const myCustomRule = new MyCustomRule();
@@ -187,8 +187,8 @@ describe("coverage", () => {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
-        onEnd(options: IOptions, Calls: Call[]) {
-          expect(Calls[0].result).toBe(true);
+        onEnd(options: IOptions, calls: Call[]) {
+          expect(calls[0].result).toBe(true);
           done();
         }
       }
