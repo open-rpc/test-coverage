@@ -226,12 +226,12 @@ describe("coverage", () => {
       await expect(coverage(options)).rejects.toThrow("No methods to test");
     });
     it("can get to expectedResult checking with no servers", async () => {
-      const reporter = new (class CustomReporter {
+      const reporter = new class CustomReporter {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
         onEnd() {}
-      })();
+      };
       const spy = jest.spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
       const openrpcDocument = { ...mockSchema };
