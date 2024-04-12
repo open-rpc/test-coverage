@@ -21,7 +21,6 @@ class JsonSchemaFakerRule implements Rule {
     this.skip = options?.skip;
     this.only = options?.only;
   }
-  onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
   getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
     if (this.skip && this.skip.includes(method.name)) {
       return [];
@@ -51,23 +50,21 @@ class JsonSchemaFakerRule implements Rule {
     return exampleCalls;
   }
   validateExampleCall(exampleCall: ExampleCall): ExampleCall {
-    const ajv = new Ajv();
-    ajv.validate(exampleCall.resultSchema, exampleCall.result);
-    if (ajv.errors && ajv.errors.length > 0) {
+    try {
+      const ajv = new Ajv();
+      ajv.validate(exampleCall.resultSchema, exampleCall.result);
+      if (ajv.errors && ajv.errors.length > 0) {
+        exampleCall.valid = false;
+        exampleCall.reason = JSON.stringify(ajv.errors);
+      } else {
+        exampleCall.valid = true;
+      }
+    } catch (e: any) {
       exampleCall.valid = false;
-      exampleCall.reason = JSON.stringify(ajv.errors);
-    } else {
-      exampleCall.valid = true;
+      exampleCall.reason = e.message;
     }
     return exampleCall;
   }
-  onEnd(options: IOptions, exampleCalls: ExampleCall[]) {}
-
-  // example call lifecycle
-  async beforeRequest(options: IOptions, exampleCall: ExampleCall) {}
-  async afterRequest(options: IOptions, exampleCall: ExampleCall) {}
-
-  afterResponse(options: IOptions, exampleCall: ExampleCall) {}
 }
 
 export default JsonSchemaFakerRule;

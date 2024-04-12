@@ -131,22 +131,11 @@ describe("coverage", () => {
         only: ["foo", "bar"],
       });
       class MyCustomRule implements Rule {
-        onBegin(options: IOptions, exampleCalls: ExampleCall[]): void {}
-        onEnd(options: IOptions, exampleCalls: ExampleCall[]): void {}
         getExampleCalls(openrpcDocument: OpenrpcDocument, method: any) {
           return [];
         }
         async validateExampleCall(exampleCall: ExampleCall) {
           return exampleCall;
-        }
-        async beforeRequest(options: IOptions, exampleCall: ExampleCall) {
-          return;
-        }
-        async afterRequest(options: IOptions, exampleCall: ExampleCall) {
-          return;
-        }
-        async afterResponse(options: IOptions, exampleCall: ExampleCall) {
-          return;
         }
       }
       const myCustomRule = new MyCustomRule();

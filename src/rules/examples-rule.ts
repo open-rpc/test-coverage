@@ -16,7 +16,6 @@ class ExamplesRule implements Rule {
     this.skip = options?.skip;
     this.only = options?.only;
   }
-  onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
   getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
     if (this.skip && this.skip.includes(method.name)) {
       return [];
@@ -56,13 +55,6 @@ class ExamplesRule implements Rule {
     }
     return exampleCall;
   }
-  onEnd(options: IOptions, exampleCalls: ExampleCall[]) {}
-
-  // example call lifecycle
-  beforeRequest(options: IOptions, exampleCall: ExampleCall) {}
-  afterRequest(options: IOptions, exampleCall: ExampleCall) {}
-
-  afterResponse(options: IOptions, exampleCall: ExampleCall) {}
 }
 
 export default ExamplesRule;

@@ -72,6 +72,11 @@ export default async (options: IOptions) => {
   for (const reporter of options.reporters) {
     reporter.onBegin(options, exampleCalls);
   }
+  if (options.rules && options.rules.length > 0) {
+    for (const rule of options.rules) {
+      await Promise.resolve(rule.onBegin?.(options));
+    }
+  }
 
   for (const exampleCall of exampleCalls) {
     for (const reporter of options.reporters) {
