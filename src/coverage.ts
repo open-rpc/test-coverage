@@ -54,6 +54,16 @@ export default async (options: IOptions) => {
     rules = options.rules;
   }
 
+  for (const reporter of options.reporters) {
+    reporter.onBegin(options, exampleCalls);
+  }
+
+  if (options.rules && options.rules.length > 0) {
+    for (const rule of options.rules) {
+      await Promise.resolve(rule.onBegin?.(options));
+    }
+  }
+
   // getExampleCalls could be async or sync
   const exampleCallsPromises = await Promise.all(filteredMethods.map((method) =>
     Promise.all(
@@ -68,15 +78,6 @@ export default async (options: IOptions) => {
     )
   ));
   exampleCalls.push(...exampleCallsPromises.flat().flat());
-
-  for (const reporter of options.reporters) {
-    reporter.onBegin(options, exampleCalls);
-  }
-  if (options.rules && options.rules.length > 0) {
-    for (const rule of options.rules) {
-      await Promise.resolve(rule.onBegin?.(options));
-    }
-  }
 
   for (const exampleCall of exampleCalls) {
     for (const reporter of options.reporters) {
@@ -100,7 +101,7 @@ export default async (options: IOptions) => {
       exampleCall.requestError = e;
     }
     if (exampleCall.requestError === undefined) {
-      await Promise.resolve(exampleCall.rule?.validateExampleCall?.(exampleCall));
+      await Promise.resolve(exampleCall.rule?.validateExampleCall(exampleCall));
     }
     await Promise.resolve(exampleCall.rule?.afterResponse?.(options, exampleCall));
     for (const reporter of options.reporters) {
