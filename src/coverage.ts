@@ -70,6 +70,7 @@ export default async (options: IOptions) => {
       rules.map(async (rule) => {
         const calls = await Promise.resolve(rule.getExampleCalls(options.openrpcDocument, method))
         calls.forEach((call) => {
+          // this adds the rule after the fact, it's a bit of a hack
           call.rule = rule;
         });
         return calls;
@@ -86,6 +87,8 @@ export default async (options: IOptions) => {
     // lifecycle methods could be async or sync
     await Promise.resolve(exampleCall.rule?.beforeRequest?.(options, exampleCall));
 
+    // transport is async but the await needs to happen later
+    // so that afterRequest is run immediately after the request is made
     const callResultPromise = options.transport(
       exampleCall.url,
       exampleCall.methodName,
