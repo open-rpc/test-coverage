@@ -17,7 +17,7 @@ export interface IOptions {
   reporters: Reporter[];
 }
 
-export interface ExampleCall {
+export interface Call {
   methodName: string;
   params: any[];
   url: string;
@@ -47,7 +47,7 @@ export default async (options: IOptions) => {
     throw new Error("No methods to test");
   }
 
-  let exampleCalls: ExampleCall[] = [];
+  let calls: Call[] = [];
 
   let rules: Rule[] = [new JsonSchemaFakerRule(), new ExamplesRule()];
   if (options.rules && options.rules.length > 0) {
@@ -55,67 +55,67 @@ export default async (options: IOptions) => {
   }
 
   for (const reporter of options.reporters) {
-    reporter.onBegin(options, exampleCalls);
+    reporter.onBegin(options, calls);
   }
 
   for (const rule of rules) {
     await Promise.resolve(rule.onBegin?.(options));
   }
 
-  // getExampleCalls could be async or sync
-  const exampleCallsPromises = await Promise.all(filteredMethods.map((method) =>
+  // getCalls could be async or sync
+  const callsPromises = await Promise.all(filteredMethods.map((method) =>
     Promise.all(
       rules.map(async (rule) => {
-        const calls = await Promise.resolve(rule.getExampleCalls(options.openrpcDocument, method))
-        calls.forEach((call) => {
+        const _calls = await Promise.resolve(rule.getCalls(options.openrpcDocument, method))
+        _calls.forEach((call) => {
           // this adds the rule after the fact, it's a bit of a hack
           call.rule = rule;
         });
-        return calls;
+        return _calls;
       }
       )
     )
   ));
-  exampleCalls.push(...exampleCallsPromises.flat().flat());
+  calls.push(...callsPromises.flat().flat());
 
-  for (const exampleCall of exampleCalls) {
+  for (const call of calls) {
     for (const reporter of options.reporters) {
-      reporter.onTestBegin(options, exampleCall);
+      reporter.onTestBegin(options, call);
     }
     // lifecycle methods could be async or sync
-    await Promise.resolve(exampleCall.rule?.beforeRequest?.(options, exampleCall));
+    await Promise.resolve(call.rule?.beforeRequest?.(options, call));
 
     // transport is async but the await needs to happen later
     // so that afterRequest is run immediately after the request is made
     const callResultPromise = options.transport(
-      exampleCall.url,
-      exampleCall.methodName,
-      exampleCall.params
+      call.url,
+      call.methodName,
+      call.params
     );
-    await Promise.resolve(exampleCall.rule?.afterRequest?.(options, exampleCall));
+    await Promise.resolve(call.rule?.afterRequest?.(options, call));
     try {
       const callResult = await callResultPromise;
-      exampleCall.result = callResult.result;
-      exampleCall.error = callResult.error;
+      call.result = callResult.result;
+      call.error = callResult.error;
     } catch (e) {
-      exampleCall.valid = false;
-      exampleCall.requestError = e;
+      call.valid = false;
+      call.requestError = e;
     }
-    if (exampleCall.requestError === undefined) {
-      await Promise.resolve(exampleCall.rule?.validateExampleCall(exampleCall));
+    if (call.requestError === undefined) {
+      await Promise.resolve(call.rule?.validateCall(call));
     }
-    await Promise.resolve(exampleCall.rule?.afterResponse?.(options, exampleCall));
+    await Promise.resolve(call.rule?.afterResponse?.(options, call));
     for (const reporter of options.reporters) {
-      reporter.onTestEnd(options, exampleCall);
+      reporter.onTestEnd(options, call);
     }
   }
 
   for (const rule of rules) {
-    await Promise.resolve(rule.onEnd?.(options, exampleCalls));
+    await Promise.resolve(rule.onEnd?.(options, calls));
   }
 
   for (const reporter of options.reporters) {
-    reporter.onEnd(options, exampleCalls);
+    reporter.onEnd(options, calls);
   }
-  return exampleCalls;
+  return calls;
 };

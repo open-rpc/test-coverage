@@ -1,5 +1,5 @@
 import { ContentDescriptorObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { ExampleCall, IOptions } from "../coverage";
+import { Call, IOptions } from "../coverage";
 import Ajv from "ajv";
 import Rule from "./rule";
 import paramsToObj from "../utils/params-to-obj";
@@ -21,7 +21,7 @@ class JsonSchemaFakerRule implements Rule {
     this.skip = options?.skip;
     this.only = options?.only;
   }
-  getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
+  getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] {
     if (this.skip && this.skip.includes(method.name)) {
       return [];
     }
@@ -29,7 +29,7 @@ class JsonSchemaFakerRule implements Rule {
       return [];
     }
     const url = openrpcDocument.servers ? openrpcDocument.servers[0].url : "";
-    const exampleCalls: ExampleCall[] = [];
+    const calls: Call[] = [];
     if (method.examples === undefined || method.examples.length === 0) {
       for (let i = 0; i < 10; i++) {
         const p = getFakeParams(method.params);
@@ -38,7 +38,7 @@ class JsonSchemaFakerRule implements Rule {
           method.paramStructure === "by-name"
             ? paramsToObj(p, method.params as ContentDescriptorObject[])
             : p;
-        exampleCalls.push({
+        calls.push({
           title: method.name + " > json-schema-faker params and expect result schema to match [" + i + "]",
           methodName: method.name,
           params,
@@ -47,23 +47,23 @@ class JsonSchemaFakerRule implements Rule {
         });
       }
     }
-    return exampleCalls;
+    return calls;
   }
-  validateExampleCall(exampleCall: ExampleCall): ExampleCall {
+  validateCall(call: Call): Call {
     try {
       const ajv = new Ajv();
-      ajv.validate(exampleCall.resultSchema, exampleCall.result);
+      ajv.validate(call.resultSchema, call.result);
       if (ajv.errors && ajv.errors.length > 0) {
-        exampleCall.valid = false;
-        exampleCall.reason = JSON.stringify(ajv.errors);
+        call.valid = false;
+        call.reason = JSON.stringify(ajv.errors);
       } else {
-        exampleCall.valid = true;
+        call.valid = true;
       }
     } catch (e: any) {
-      exampleCall.valid = false;
-      exampleCall.reason = e.message;
+      call.valid = false;
+      call.reason = e.message;
     }
-    return exampleCall;
+    return call;
   }
 }
 

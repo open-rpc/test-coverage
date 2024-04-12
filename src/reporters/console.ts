@@ -2,11 +2,11 @@ import colors from "colors";
 import {
   JSONSchemaObject,
 } from "@open-rpc/meta-schema";
-import {ExampleCall, IOptions} from "../coverage";
+import {Call, IOptions} from "../coverage";
 import _ from "lodash";
 import Reporter from "./reporter";
 
-const getExpectedString = (ex: ExampleCall) => {
+const getExpectedString = (ex: Call) => {
   let resSchemaID;
   if (ex.resultSchema === true) { resSchemaID = "true"; }
   else if (ex.resultSchema === false) { resSchemaID = "false"; }
@@ -20,18 +20,18 @@ const getExpectedString = (ex: ExampleCall) => {
 
 class ConsoleReporter implements Reporter {
 
-  onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
-  onTestBegin(options: IOptions, exampleCall: ExampleCall) {}
-  onTestEnd(options: IOptions, exampleCall: ExampleCall) {}
-  onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
+  onBegin(options: IOptions, Calls: Call[]) {}
+  onTestBegin(options: IOptions, Call: Call) {}
+  onTestEnd(options: IOptions, Call: Call) {}
+  onEnd(options: IOptions, Calls: Call[]) {
     const metrics = {
       success: 0,
       error: 0
     };
-    _.chain(exampleCalls)
+    _.chain(Calls)
       .groupBy("methodName")
-      .forEach((exampleCallsForMethod, methodName) => {
-        const hasInvalid = exampleCallsForMethod.reduce((m, {valid}) => m || !valid, false);
+      .forEach((CallsForMethod, methodName) => {
+        const hasInvalid = CallsForMethod.reduce((m, {valid}) => m || !valid, false);
 
         if (hasInvalid) {
           console.log(colors.bgRed(colors.yellow(methodName + ":")));
@@ -39,7 +39,7 @@ class ConsoleReporter implements Reporter {
           console.log(colors.bgGreen(colors.black(methodName + ":")));
         }
 
-        exampleCallsForMethod.forEach((ex) => {
+        CallsForMethod.forEach((ex) => {
           if (ex.valid) {
             metrics.success++;
             const expected = getExpectedString(ex);

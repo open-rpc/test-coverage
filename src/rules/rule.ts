@@ -1,15 +1,15 @@
 import { MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { ExampleCall, IOptions } from "../coverage";
+import { Call, IOptions } from "../coverage";
 
 interface Rule {
   onBegin?(options: IOptions): Promise<void> | void;
-  getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] | Promise<ExampleCall[]>;
-  validateExampleCall(exampleCall: ExampleCall): Promise<ExampleCall> | ExampleCall;
-  onEnd?(options: IOptions, exampleCalls: ExampleCall[]): void;
+  getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] | Promise<Call[]>;
+  validateCall(call: Call): Promise<Call> | Call;
+  onEnd?(options: IOptions, calls: Call[]): void;
   // example call lifecycle
-  beforeRequest?(options: IOptions, exampleCall: ExampleCall): Promise<void> | void;
-  afterRequest?(options: IOptions, exampleCall: ExampleCall): Promise<void> | void;
-  afterResponse?(options: IOptions, exampleCall: ExampleCall): Promise<void> | void;
+  beforeRequest?(options: IOptions, call: Call): Promise<void> | void;
+  afterRequest?(options: IOptions, call: Call): Promise<void> | void;
+  afterResponse?(options: IOptions, call: Call): Promise<void> | void;
 }
 
 export default Rule;

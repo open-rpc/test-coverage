@@ -1,4 +1,4 @@
-import coverage, { ExampleCall, IOptions } from "./coverage";
+import coverage, { Call, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
 import EmptyReporter from "./reporters/emptyReporter";
 import ConsoleReporter from "./reporters/console";
@@ -131,23 +131,23 @@ describe("coverage", () => {
         only: ["foo", "bar"],
       });
       class MyCustomRule implements Rule {
-        getExampleCalls(openrpcDocument: OpenrpcDocument, method: any) {
+        getCalls(openrpcDocument: OpenrpcDocument, method: any) {
           return [];
         }
-        async validateExampleCall(exampleCall: ExampleCall) {
-          return exampleCall;
+        async validateCall(Call: Call) {
+          return Call;
         }
       }
       const myCustomRule = new MyCustomRule();
 
-      const getExampleCallsSpy = jest.spyOn(exampleRule, "getExampleCalls");
-      const getExampleCallsCustomSpy = jest.spyOn(
+      const getCallsSpy = jest.spyOn(exampleRule, "getCalls");
+      const getCallsCustomSpy = jest.spyOn(
         myCustomRule,
-        "getExampleCalls"
+        "getCalls"
       );
-      const getExampleCallsJsonSchemaFakerSpy = jest.spyOn(
+      const getCallsJsonSchemaFakerSpy = jest.spyOn(
         jsonSchemaFakerRule,
-        "getExampleCalls"
+        "getCalls"
       );
       const options = {
         reporters: [reporter],
@@ -158,9 +158,9 @@ describe("coverage", () => {
         only: [],
       };
       await coverage(options);
-      expect(getExampleCallsSpy).toHaveBeenCalled();
-      expect(getExampleCallsCustomSpy).toHaveBeenCalled();
-      expect(getExampleCallsJsonSchemaFakerSpy).toHaveBeenCalled();
+      expect(getCallsSpy).toHaveBeenCalled();
+      expect(getCallsCustomSpy).toHaveBeenCalled();
+      expect(getCallsJsonSchemaFakerSpy).toHaveBeenCalled();
     });
   });
   describe("reporter", () => {
@@ -187,8 +187,8 @@ describe("coverage", () => {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
-        onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
-          expect(exampleCalls[0].result).toBe(true);
+        onEnd(options: IOptions, Calls: Call[]) {
+          expect(Calls[0].result).toBe(true);
           done();
         }
       }

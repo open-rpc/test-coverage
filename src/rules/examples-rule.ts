@@ -1,5 +1,5 @@
 import { ContentDescriptorObject, ExampleObject, ExamplePairingObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { ExampleCall, IOptions } from "../coverage";
+import { Call, IOptions } from "../coverage";
 import { isEqual } from "lodash";
 import Rule from "./rule";
 import paramsToObj from "../utils/params-to-obj";
@@ -16,14 +16,14 @@ class ExamplesRule implements Rule {
     this.skip = options?.skip;
     this.only = options?.only;
   }
-  getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] {
+  getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] {
     if (this.skip && this.skip.includes(method.name)) {
       return [];
     }
     if (this.only && this.only.length > 0 && !this.only.includes(method.name)) {
       return [];
     }
-    const exampleCalls: ExampleCall[] = [];
+    const calls: Call[] = [];
     if (method.examples) {
       (method.examples as ExamplePairingObject[]).forEach((ex) => {
         const p = (ex.params as ExampleObject[]).map((e) => e.value);
@@ -31,7 +31,7 @@ class ExamplesRule implements Rule {
           method.paramStructure === "by-name"
             ? paramsToObj(p, method.params as ContentDescriptorObject[])
             : p;
-        exampleCalls.push({
+        calls.push({
           title:
             method.name +
             " > example params and expect result to match: " +
@@ -44,16 +44,16 @@ class ExamplesRule implements Rule {
         });
       });
     }
-    return exampleCalls;
+    return calls;
   }
-  validateExampleCall(exampleCall: ExampleCall): ExampleCall {
-    if (exampleCall.expectedResult) {
-      exampleCall.valid = isEqual(
-        exampleCall.expectedResult,
-        exampleCall.result
+  validateCall(call: Call): Call {
+    if (call.expectedResult) {
+      call.valid = isEqual(
+        call.expectedResult,
+        call.result
       );
     }
-    return exampleCall;
+    return call;
   }
 }
 

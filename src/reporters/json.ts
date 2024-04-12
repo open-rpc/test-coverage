@@ -1,18 +1,18 @@
-import { ExampleCall, IOptions } from '../coverage';
+import { Call, IOptions } from '../coverage';
 import Reporter from './reporter';
 
 class JsonReporter implements Reporter {
-  onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
-  onTestBegin(options: IOptions, exampleCall: ExampleCall) {}
+  onBegin(options: IOptions, Calls: Call[]) {}
+  onTestBegin(options: IOptions, Call: Call) {}
 
-  onTestEnd(options: IOptions, exampleCall: ExampleCall) {}
+  onTestEnd(options: IOptions, Call: Call) {}
 
-  onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
-    const failed = exampleCalls.filter((ec) => !ec.valid);
+  onEnd(options: IOptions, Calls: Call[]) {
+    const failed = Calls.filter((ec) => !ec.valid);
 
-    const passed = exampleCalls.filter((ec) => ec.valid);
+    const passed = Calls.filter((ec) => ec.valid);
 
-    console.log(JSON.stringify(exampleCalls, undefined, 4));
+    console.log(JSON.stringify(Calls, undefined, 4));
   }
 }
 

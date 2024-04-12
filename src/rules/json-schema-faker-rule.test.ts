@@ -30,14 +30,14 @@ describe("JsonSchemaFakerRule", () => {
         },
       ],
     } as any;
-    const calls = rule.getExampleCalls(openrpcDocument, openrpcDocument.methods[0]);
+    const calls = rule.getCalls(openrpcDocument, openrpcDocument.methods[0]);
     calls[0].result = true;
-    const result = rule.validateExampleCall(calls[0]);
+    const result = rule.validateCall(calls[0]);
     expect(result.valid).toBe(true);
   });
   it("should handle errors within ajv when validating", () => {
     const rule = new JsonSchemaFakerRule();
-    const exampleCall = {
+    const Call = {
       title: 'test call',
       methodName: "foo",
       params: [],
@@ -47,7 +47,7 @@ describe("JsonSchemaFakerRule", () => {
         unevaluatedProperties: false,
       },
     };
-    const result = rule.validateExampleCall(exampleCall);
+    const result = rule.validateCall(Call);
     expect(result.valid).toBe(false);
     expect(result.reason).toMatch('unknown keyword: "unevaluatedProperties"');
   });
