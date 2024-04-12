@@ -54,12 +54,20 @@ export default async (options: IOptions) => {
     rules = options.rules;
   }
 
-  filteredMethods.forEach((method) => {
-    rules.forEach((rule) =>
-      rule.getExampleCalls(options.openrpcDocument, method)
-        .forEach((exampleCall) => exampleCalls.push({...exampleCall, rule}))
-    );
-  });
+  // getExampleCalls could be async or sync
+  const exampleCallsPromises = await Promise.all(filteredMethods.map((method) =>
+    Promise.all(
+      rules.map(async (rule) => {
+        const calls = await Promise.resolve(rule.getExampleCalls(options.openrpcDocument, method))
+        calls.forEach((call) => {
+          call.rule = rule;
+        });
+        return calls;
+      }
+      )
+    )
+  ));
+  exampleCalls.push(...exampleCallsPromises.flat().flat());
 
   for (const reporter of options.reporters) {
     reporter.onBegin(options, exampleCalls);
@@ -86,7 +94,9 @@ export default async (options: IOptions) => {
       exampleCall.valid = false;
       exampleCall.requestError = e;
     }
-    exampleCall.requestError ?? await Promise.resolve(exampleCall.rule?.validateExampleCall?.(exampleCall));
+    if (exampleCall.requestError === undefined) {
+      await Promise.resolve(exampleCall.rule?.validateExampleCall?.(exampleCall));
+    }
     await Promise.resolve(exampleCall.rule?.afterResponse?.(options, exampleCall));
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, exampleCall);

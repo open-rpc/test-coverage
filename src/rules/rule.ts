@@ -3,7 +3,7 @@ import { ExampleCall, IOptions } from "../coverage";
 
 interface Rule {
   onBegin(options: IOptions, exampleCalls: ExampleCall[]): void;
-  getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[];
+  getExampleCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): ExampleCall[] | Promise<ExampleCall[]>;
   validateExampleCall(exampleCall: ExampleCall): Promise<ExampleCall> | ExampleCall;
   onEnd(options: IOptions, exampleCalls: ExampleCall[]): void;
   // example call lifecycle
