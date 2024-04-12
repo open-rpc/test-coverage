@@ -58,10 +58,8 @@ export default async (options: IOptions) => {
     reporter.onBegin(options, exampleCalls);
   }
 
-  if (options.rules && options.rules.length > 0) {
-    for (const rule of options.rules) {
-      await Promise.resolve(rule.onBegin?.(options));
-    }
+  for (const rule of rules) {
+    await Promise.resolve(rule.onBegin?.(options));
   }
 
   // getExampleCalls could be async or sync
@@ -110,6 +108,10 @@ export default async (options: IOptions) => {
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, exampleCall);
     }
+  }
+
+  for (const rule of rules) {
+    await Promise.resolve(rule.onEnd?.(options, exampleCalls));
   }
 
   for (const reporter of options.reporters) {
