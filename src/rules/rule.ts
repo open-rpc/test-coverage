@@ -6,7 +6,7 @@ interface Rule {
   getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] | Promise<Call[]>;
   validateCall(call: Call): Promise<Call> | Call;
   onEnd?(options: IOptions, calls: Call[]): void;
-  // example call lifecycle
+  // call lifecycle
   beforeRequest?(options: IOptions, call: Call): Promise<void> | void;
   afterRequest?(options: IOptions, call: Call): Promise<void> | void;
   afterResponse?(options: IOptions, call: Call): Promise<void> | void;
