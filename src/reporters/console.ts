@@ -74,7 +74,7 @@ class ConsoleReporter implements Reporter {
               console.log(
                 colors.magenta("\t\t\t \->"),
                 colors.white.underline("instead received: "),
-                colors.red(JSON.stringify(ex.result))
+                colors.red(JSON.stringify(ex.result || ex.error))
               );
 
               if (ex.reason) {
