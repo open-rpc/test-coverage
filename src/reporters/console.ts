@@ -20,18 +20,18 @@ const getExpectedString = (ex: Call) => {
 
 class ConsoleReporter implements Reporter {
 
-  onBegin(options: IOptions, Calls: Call[]) {}
-  onTestBegin(options: IOptions, Call: Call) {}
-  onTestEnd(options: IOptions, Call: Call) {}
-  onEnd(options: IOptions, Calls: Call[]) {
+  onBegin(options: IOptions, calls: Call[]) {}
+  onTestBegin(options: IOptions, call: Call) {}
+  onTestEnd(options: IOptions, call: Call) {}
+  onEnd(options: IOptions, calls: Call[]) {
     const metrics = {
       success: 0,
       error: 0
     };
-    _.chain(Calls)
+    _.chain(calls)
       .groupBy("methodName")
-      .forEach((CallsForMethod, methodName) => {
-        const hasInvalid = CallsForMethod.reduce((m, {valid}) => m || !valid, false);
+      .forEach((callsForMethod, methodName) => {
+        const hasInvalid = callsForMethod.reduce((m, {valid}) => m || !valid, false);
 
         if (hasInvalid) {
           console.log(colors.bgRed(colors.yellow(methodName + ":")));
@@ -39,7 +39,7 @@ class ConsoleReporter implements Reporter {
           console.log(colors.bgGreen(colors.black(methodName + ":")));
         }
 
-        CallsForMethod.forEach((ex) => {
+        callsForMethod.forEach((ex) => {
           if (ex.valid) {
             metrics.success++;
             const expected = getExpectedString(ex);

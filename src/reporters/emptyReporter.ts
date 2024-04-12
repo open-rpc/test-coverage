@@ -2,22 +2,22 @@ import { Call, IOptions } from '../coverage';
 import Reporter from './reporter';
 
 class EmptyReporter implements Reporter {
-  onBegin(options: IOptions, Calls: Call[]) {
-    console.log(`Starting the run with ${Calls.length} tests`);
+  onBegin(options: IOptions, calls: Call[]) {
+    console.log(`Starting the run with ${calls.length} tests`);
   }
 
-  onTestBegin(options: IOptions, Call: Call) {
-    console.log(`started test ${Call.title}`);
+  onTestBegin(options: IOptions, call: Call) {
+    console.log(`started test ${call.title}`);
   }
 
-  onTestEnd(options: IOptions, Call: Call) {
-    console.log(`Finished test ${Call.title}: ${Call.valid ? "success" : "error"}`);
+  onTestEnd(options: IOptions, call: Call) {
+    console.log(`Finished test ${call.title}: ${call.valid ? "success" : "error"}`);
   }
 
-  onEnd(options: IOptions, Calls: Call[]) {
-    const failed = Calls.filter((ec) => !ec.valid);
-    const passed = Calls.filter((ec) => ec.valid);
-    console.log(`Finished the running ${Calls.length} tests: ${failed.length} failed, ${passed.length} passed`);
+  onEnd(options: IOptions, calls: Call[]) {
+    const failed = calls.filter((ec) => !ec.valid);
+    const passed = calls.filter((ec) => ec.valid);
+    console.log(`Finished the running ${calls.length} tests: ${failed.length} failed, ${passed.length} passed`);
   }
 }
 

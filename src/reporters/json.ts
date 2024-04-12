@@ -2,17 +2,17 @@ import { Call, IOptions } from '../coverage';
 import Reporter from './reporter';
 
 class JsonReporter implements Reporter {
-  onBegin(options: IOptions, Calls: Call[]) {}
-  onTestBegin(options: IOptions, Call: Call) {}
+  onBegin(options: IOptions, calls: Call[]) {}
+  onTestBegin(options: IOptions, call: Call) {}
 
-  onTestEnd(options: IOptions, Call: Call) {}
+  onTestEnd(options: IOptions, call: Call) {}
 
-  onEnd(options: IOptions, Calls: Call[]) {
-    const failed = Calls.filter((ec) => !ec.valid);
+  onEnd(options: IOptions, calls: Call[]) {
+    const failed = calls.filter((ec) => !ec.valid);
 
-    const passed = Calls.filter((ec) => ec.valid);
+    const passed = calls.filter((ec) => ec.valid);
 
-    console.log(JSON.stringify(Calls, undefined, 4));
+    console.log(JSON.stringify(calls, undefined, 4));
   }
 }
 
