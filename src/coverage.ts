@@ -50,7 +50,7 @@ export default async (options: IOptions) => {
   let exampleCalls: ExampleCall[] = [];
 
   let rules: Rule[] = [new JsonSchemaFakerRule(), new ExamplesRule()];
-  if (options.rules) {
+  if (options.rules && options.rules.length > 0) {
     rules = options.rules;
   }
 
