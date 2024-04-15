@@ -25,6 +25,17 @@ Even after writing your OpenRPC Document, you want to test that the OpenRPC Docu
 - report back the coverage results
 - show errors and the result to help fix inconsistencies
 
+
+## Extending with a `Rule`
+Rules are a way to extend the test coverage tool to check for specific things when calling your JSON-RPC API. For example, you may want to check that some fields are always present in the result.  You can write a rule to check for that.
+
+A rule is a class that extends the `Rule` class and implements the `getCalls` function. The `getCalls` function should return an array of calls to make to the JSON-RPC API. The `Rule` class will then make the calls and check the results. It checks the results with the `validateCall` function, it expects that you mutate the `call.valid` property to `true` if the call is valid, and `false` if the call is invalid.
+
+Lastly there are lifecycle events that you can hook into to do things like setup and teardown. The `onBegin` function is called before any calls are made, and the `onEnd` function is called after all calls are made. There are also `beforeRequest`, `afterRequest`, and `afterResponse` lifecycle functions that are called before the request is made, after the request is made, and after the response is received respectively. See the [`Rule`](src/rules/rule.ts) interface for more information.
+
+## Custom Reporters
+You can write custom reporters to output the results of the test coverage tool in a different format. A reporter is a class that extends the `Reporter` class and implements the lifecycle functions. The `Reporter` class will call the lifecycle functions at the appropriate time. The `onBegin` function is called before any calls are made, and the `onEnd` function is called after all calls are made. There are also `onTestBegin` and `onTestEnd` lifecycle functions that are called before and after each test respectively. See the [`Reporter`](src/reporters/reporter.ts) interface for more information.
+
 ### Installation:
 
 ```
@@ -38,7 +49,7 @@ npm install -g @open-rpc/test-coverage
 
 
 ```
-open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/master/service-descriptions/simple-math-openrpc.json --transport=http --reporter=console --skip=addition
+open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/master/service-descriptions/simple-math-openrpc.json --transport=http --reporters=console --skip=addition
 ```
 
 
