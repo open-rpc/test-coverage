@@ -1,7 +1,10 @@
-import coverage, { ExampleCall, IOptions } from "./coverage";
+import coverage, { Call, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
 import EmptyReporter from "./reporters/emptyReporter";
 import ConsoleReporter from "./reporters/console";
+import Rule from "./rules/rule";
+import ExamplesRule from "./rules/examples-rule";
+import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
 
 const mockSchema = {
   openrpc: "1.0.0",
@@ -64,7 +67,7 @@ const mockSchema = {
             {
               name: "barParam2",
               value: "bar",
-            }
+            },
           ],
           result: {
             name: "fooResult",
@@ -116,6 +119,53 @@ const mockSchema = {
 } as OpenrpcDocument;
 
 describe("coverage", () => {
+  describe("rules", () => {
+    it("can call multiple rules with different async or sync lifecycle functions", async () => {
+      const reporter = new EmptyReporter();
+      const transport = () => Promise.resolve({});
+      const openrpcDocument = mockSchema;
+      const exampleRule = new ExamplesRule({ skip: ["foo"], only: ["baz"] });
+      const jsonSchemaFakerRule = new JsonSchemaFakerRule({ skip: ["baz"], only: [] });
+      const jsonSchemaFakerRule2 = new JsonSchemaFakerRule({
+        skip: [],
+        only: ["foo", "bar"],
+      });
+      class MyCustomRule implements Rule {
+        getTitle(): string {
+          return "My custom rule";
+        }
+        getCalls(openrpcDocument: OpenrpcDocument, method: any) {
+          return [];
+        }
+        async validateCall(call: Call) {
+          return call;
+        }
+      }
+      const myCustomRule = new MyCustomRule();
+
+      const getCallsSpy = jest.spyOn(exampleRule, "getCalls");
+      const getCallsCustomSpy = jest.spyOn(
+        myCustomRule,
+        "getCalls"
+      );
+      const getCallsJsonSchemaFakerSpy = jest.spyOn(
+        jsonSchemaFakerRule,
+        "getCalls"
+      );
+      const options = {
+        reporters: [reporter],
+        rules: [exampleRule, myCustomRule, jsonSchemaFakerRule, jsonSchemaFakerRule2],
+        transport,
+        openrpcDocument,
+        skip: [],
+        only: [],
+      };
+      await coverage(options);
+      expect(getCallsSpy).toHaveBeenCalled();
+      expect(getCallsCustomSpy).toHaveBeenCalled();
+      expect(getCallsJsonSchemaFakerSpy).toHaveBeenCalled();
+    });
+  });
   describe("reporter", () => {
     it("can call the reporter", (done) => {
       class CustomReporter {
@@ -140,8 +190,8 @@ describe("coverage", () => {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
-        onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
-          expect(exampleCalls[0].result).toBe(true);
+        onEnd(options: IOptions, calls: Call[]) {
+          expect(calls[0].result).toBe(true);
           done();
         }
       }
@@ -159,12 +209,12 @@ describe("coverage", () => {
   });
   describe("coverage tests", () => {
     it("throws an error when there are no methods", async () => {
-      const reporter = new class CustomReporter {
+      const reporter = new (class CustomReporter {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
         onEnd() {}
-      };
+      })();
       const spy = jest.spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
@@ -172,11 +222,11 @@ describe("coverage", () => {
         reporters: [reporter],
         transport,
         openrpcDocument,
-        skip: ['foo', 'bar', 'baz'],
+        skip: ["foo", "bar", "baz"],
         only: [],
       };
 
-      await expect(coverage(options)).rejects.toThrow('No methods to test');
+      await expect(coverage(options)).rejects.toThrow("No methods to test");
     });
     it("can get to expectedResult checking with no servers", async () => {
       const reporter = new class CustomReporter {
@@ -187,32 +237,34 @@ describe("coverage", () => {
       };
       const spy = jest.spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
-      const openrpcDocument = {...mockSchema};
+      const openrpcDocument = { ...mockSchema };
       openrpcDocument.servers = undefined;
       const options = {
         reporters: [reporter],
         transport,
         openrpcDocument,
         skip: [],
-        only: ['baz'],
+        only: ["baz"],
       };
 
       await expect(coverage(options)).resolves.toBeDefined();
     });
   });
   describe("transport", () => {
-    it("can call the transport", (done) => {
-      const transport = () => {
-        done();
-        return Promise.resolve({});
-      };
-      coverage({
+    it("can call the transport", async () => {
+      const transport = jest.fn();
+      await coverage({
         reporters: [new EmptyReporter()],
         transport,
-        openrpcDocument: mockSchema,
+        openrpcDocument: {
+          openrpc: "1.2.6",
+          info: { title: "f", version: "0.0.0" },
+          methods: [mockSchema.methods[0]],
+        },
         skip: [],
         only: [],
       });
+      await expect(transport).toHaveBeenCalled();
     });
   });
   describe("reporter more tests", () => {
@@ -234,13 +286,13 @@ describe("coverage", () => {
       await coverage(options);
       expect(reporter.onBegin).toHaveBeenCalled();
     });
-    it("onTestBegin is called",  async () => {
-      const reporter = new class CustomReporter {
+    it("onTestBegin is called", async () => {
+      const reporter = new (class CustomReporter {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
         onEnd() {}
-      };
+      })();
       const spy = jest.spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
@@ -253,7 +305,7 @@ describe("coverage", () => {
       };
 
       await coverage(options);
-      expect(spy).toHaveBeenCalledTimes(12);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
     it("can handle multiple reporters", async () => {
       const reporter = new EmptyReporter();
@@ -281,14 +333,14 @@ describe("coverage", () => {
       await coverage(options);
 
       expect(onBeginSpy).toHaveBeenCalledTimes(1);
-      expect(onTestBeginSpy).toHaveBeenCalledTimes(12);
-      expect(onTestEndSpy).toHaveBeenCalledTimes(12);
+      expect(onTestBeginSpy).toHaveBeenCalledTimes(3);
+      expect(onTestEndSpy).toHaveBeenCalledTimes(3);
       expect(onEndSpy).toHaveBeenCalledTimes(1);
 
       expect(onBeginSpy2).toHaveBeenCalledTimes(1);
-      expect(onTestBeginSpy2).toHaveBeenCalledTimes(12);
-      expect(onTestEndSpy2).toHaveBeenCalledTimes(12);
+      expect(onTestBeginSpy2).toHaveBeenCalledTimes(3);
+      expect(onTestEndSpy2).toHaveBeenCalledTimes(3);
       expect(onEndSpy2).toHaveBeenCalledTimes(1);
-    })
+    });
   });
 });

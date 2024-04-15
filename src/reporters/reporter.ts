@@ -1,10 +1,10 @@
-import { ExampleCall, IOptions } from "../coverage";
+import { Call, IOptions } from "../coverage";
 
 interface Reporter {
-  onBegin(options: IOptions, exampleCalls: ExampleCall[]): void;
-  onTestBegin(options: IOptions, exampleCall: ExampleCall): void;
-  onTestEnd(options: IOptions, exampleCall: ExampleCall): void;
-  onEnd(options: IOptions, exampleCalls: ExampleCall[]): void;
+  onBegin(options: IOptions, calls: Call[]): void;
+  onTestBegin(options: IOptions, call: Call): void;
+  onTestEnd(options: IOptions, call: Call): void;
+  onEnd(options: IOptions, calls: Call[]): void;
 }
 
 export default Reporter;

@@ -2,11 +2,11 @@ import colors from "colors";
 import {
   JSONSchemaObject,
 } from "@open-rpc/meta-schema";
-import {ExampleCall, IOptions} from "../coverage";
+import {Call, IOptions} from "../coverage";
 import _ from "lodash";
 import Reporter from "./reporter";
 
-const getExpectedString = (ex: ExampleCall) => {
+const getExpectedString = (ex: Call) => {
   let resSchemaID;
   if (ex.resultSchema === true) { resSchemaID = "true"; }
   else if (ex.resultSchema === false) { resSchemaID = "false"; }
@@ -19,19 +19,32 @@ const getExpectedString = (ex: ExampleCall) => {
 };
 
 class ConsoleReporter implements Reporter {
+  private metrics: {
+    success: number;
+    error: number;
+  }
 
-  onBegin(options: IOptions, exampleCalls: ExampleCall[]) {}
-  onTestBegin(options: IOptions, exampleCall: ExampleCall) {}
-  onTestEnd(options: IOptions, exampleCall: ExampleCall) {}
-  onEnd(options: IOptions, exampleCalls: ExampleCall[]) {
+  constructor() {
+    this.metrics = {
+      success: 0,
+      error: 0
+    };
+  }
+
+  onBegin(options: IOptions, calls: Call[]) {}
+  onTestBegin(options: IOptions, call: Call) {}
+  onTestEnd(options: IOptions, call: Call) {
+
+  }
+  onEnd(options: IOptions, calls: Call[]) {
     const metrics = {
       success: 0,
       error: 0
     };
-    _.chain(exampleCalls)
+    _.chain(calls)
       .groupBy("methodName")
-      .forEach((exampleCallsForMethod, methodName) => {
-        const hasInvalid = exampleCallsForMethod.reduce((m, {valid}) => m || !valid, false);
+      .forEach((callsForMethod, methodName) => {
+        const hasInvalid = callsForMethod.reduce((m, {valid}) => m || !valid, false);
 
         if (hasInvalid) {
           console.log(colors.bgRed(colors.yellow(methodName + ":")));
@@ -39,7 +52,7 @@ class ConsoleReporter implements Reporter {
           console.log(colors.bgGreen(colors.black(methodName + ":")));
         }
 
-        exampleCallsForMethod.forEach((ex) => {
+        callsForMethod.forEach((ex) => {
           if (ex.valid) {
             metrics.success++;
             const expected = getExpectedString(ex);
@@ -48,6 +61,7 @@ class ConsoleReporter implements Reporter {
               colors.bold(colors.green("✓")),
               colors.magenta("-"),
               colors.blue(`${methodName}(${JSON.stringify(ex.params)})`),
+              colors.white(((ex.timings!.endTime! - ex.timings!.startTime!) / 1000).toString() + "s"),
             );
           } else {
             metrics.error++;
@@ -56,7 +70,8 @@ class ConsoleReporter implements Reporter {
               "\t",
               colors.bold(colors.red("X")),
               colors.magenta("-"),
-              colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`))
+              colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`)),
+              colors.white(((ex.timings!.endTime! - ex.timings!.startTime!) / 1000).toString() + "s")
             );
             console.log(
               colors.magenta("\t\t\t \->"),
@@ -74,7 +89,7 @@ class ConsoleReporter implements Reporter {
               console.log(
                 colors.magenta("\t\t\t \->"),
                 colors.white.underline("instead received: "),
-                colors.red(JSON.stringify(ex.result))
+                colors.red(JSON.stringify(ex)),
               );
 
               if (ex.reason) {
@@ -92,6 +107,7 @@ class ConsoleReporter implements Reporter {
       .value();
 
     console.log("==========");
+    console.log("Total Time: ", colors.green((calls.reduce((m, {timings}) => m + (timings!.endTime! - timings!.startTime!), 0) / 1000).toString() + "s"));
     console.log("Success: ", colors.green(metrics.success.toString()));
     console.log("Errors: ", colors.red(metrics.error.toString()));
     console.log("==========");
