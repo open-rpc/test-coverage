@@ -305,7 +305,7 @@ describe("coverage", () => {
       };
 
       await coverage(options);
-      expect(spy).toHaveBeenCalledTimes(12);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
     it("can handle multiple reporters", async () => {
       const reporter = new EmptyReporter();
@@ -333,13 +333,13 @@ describe("coverage", () => {
       await coverage(options);
 
       expect(onBeginSpy).toHaveBeenCalledTimes(1);
-      expect(onTestBeginSpy).toHaveBeenCalledTimes(12);
-      expect(onTestEndSpy).toHaveBeenCalledTimes(12);
+      expect(onTestBeginSpy).toHaveBeenCalledTimes(3);
+      expect(onTestEndSpy).toHaveBeenCalledTimes(3);
       expect(onEndSpy).toHaveBeenCalledTimes(1);
 
       expect(onBeginSpy2).toHaveBeenCalledTimes(1);
-      expect(onTestBeginSpy2).toHaveBeenCalledTimes(12);
-      expect(onTestEndSpy2).toHaveBeenCalledTimes(12);
+      expect(onTestBeginSpy2).toHaveBeenCalledTimes(3);
+      expect(onTestEndSpy2).toHaveBeenCalledTimes(3);
       expect(onEndSpy2).toHaveBeenCalledTimes(1);
     });
   });

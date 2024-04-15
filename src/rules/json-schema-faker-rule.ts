@@ -22,7 +22,7 @@ class JsonSchemaFakerRule implements Rule {
   constructor(options?: RulesOptions) {
     this.skip = options?.skip;
     this.only = options?.only;
-    this.numCalls = options?.numCalls || 5;
+    this.numCalls = options?.numCalls || 10;
   }
   getTitle() {
     return "Generate params from json-schema-faker and expect results to match";
