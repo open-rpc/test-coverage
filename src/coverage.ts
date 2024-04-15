@@ -34,6 +34,20 @@ export interface Call {
   };
   title: string;
   rule?: Rule;
+  timings?: {
+    startTime?: number;
+    endTime?: number;
+    getCallsStart?: number;
+    getCallsEnd?: number;
+    beforeRequestStart?: number;
+    beforeRequestEnd?: number;
+    afterRequestStart?: number;
+    afterRequestEnd?: number;
+    afterResponseStart?: number;
+    afterResponseEnd?: number;
+    validateCallStart?: number;
+    validateCallEnd?: number;
+  }
 }
 
 export default async (options: IOptions) => {
@@ -79,8 +93,19 @@ export default async (options: IOptions) => {
   calls.push(...callsPromises.flat().flat());
 
   for (const call of calls) {
+    const startTime = Date.now();
+    if (call.timings === undefined) {
+      call.timings = {
+        startTime,
+        getCallsStart: startTime,
+        getCallsEnd: Date.now(),
+      }
+    }
     for (const reporter of options.reporters) {
       reporter.onTestBegin(options, call);
+    }
+    if (call.timings) {
+      call.timings.beforeRequestStart = Date.now();
     }
     // lifecycle methods could be async or sync
     await Promise.resolve(call.rule?.beforeRequest?.(options, call));
@@ -92,7 +117,13 @@ export default async (options: IOptions) => {
       call.methodName,
       call.params
     );
+    if (call.timings) {
+      call.timings.afterRequestStart = Date.now();
+    }
     await Promise.resolve(call.rule?.afterRequest?.(options, call));
+    if (call.timings) {
+      call.timings.afterRequestEnd = Date.now();
+    }
     try {
       const callResult = await callResultPromise;
       call.result = callResult.result;
@@ -102,9 +133,23 @@ export default async (options: IOptions) => {
       call.requestError = e;
     }
     if (call.requestError === undefined) {
+      if (call.timings) {
+        call.timings.validateCallStart = Date.now();
+      }
       await Promise.resolve(call.rule?.validateCall(call));
+      if (call.timings) {
+        call.timings.validateCallEnd = Date.now();
+      }
+    }
+
+    if (call.timings) {
+      call.timings.afterResponseStart = Date.now();
     }
     await Promise.resolve(call.rule?.afterResponse?.(options, call));
+    if (call.timings) {
+      call.timings.afterResponseEnd = Date.now();
+      call.timings.endTime = Date.now();
+    }
     for (const reporter of options.reporters) {
       reporter.onTestEnd(options, call);
     }

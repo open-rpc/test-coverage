@@ -15,7 +15,7 @@ program
   .version(require('./get-version'))
   .usage('[options]')
   .option('-s, --schema [schema]', 'JSON string or a Path/Url pointing to an open rpc schema')
-  .option('-r, --reporters <reporters>', 'Use the specified reporter [console] [json] [empty]. Can be a comma separated list of reporters.')
+  .option('-r, --reporters <reporters>', 'Use the specified reporter [console] [console-rule] [console-streaming] [json] [empty]. Can be a comma separated list of reporters.')
   .option('-t, --transport <transport>', 'Use the specified transport [http]')
   .option('--skip <skip>', 'Methods to skip. Comma separated list of method names')
   .option('--only <only>', 'Methods to only run. Comma separated list of method names')

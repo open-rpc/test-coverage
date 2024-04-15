@@ -13,13 +13,19 @@ const getFakeParams = (params: any[]): any[] => {
 interface RulesOptions {
   skip: string[];
   only: string[];
+  numCalls?: number;
 }
 class JsonSchemaFakerRule implements Rule {
   private skip?: string[];
   private only?: string[];
+  private numCalls: number;
   constructor(options?: RulesOptions) {
     this.skip = options?.skip;
     this.only = options?.only;
+    this.numCalls = options?.numCalls || 5;
+  }
+  getTitle() {
+    return "Generate params from json-schema-faker and expect results to match";
   }
   getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] {
     if (this.skip && this.skip.includes(method.name)) {
@@ -31,7 +37,12 @@ class JsonSchemaFakerRule implements Rule {
     const url = openrpcDocument.servers ? openrpcDocument.servers[0].url : "";
     const calls: Call[] = [];
     if (method.examples === undefined || method.examples.length === 0) {
-      for (let i = 0; i < 10; i++) {
+      let callNumForParams = this.numCalls;
+      if (method.params.length === 0) {
+        callNumForParams = 1;
+      }
+
+      for (let i = 0; i < callNumForParams; i++) {
         const p = getFakeParams(method.params);
         // handle object or array case
         const params =
@@ -39,7 +50,7 @@ class JsonSchemaFakerRule implements Rule {
             ? paramsToObj(p, method.params as ContentDescriptorObject[])
             : p;
         calls.push({
-          title: method.name + " > json-schema-faker params and expect result schema to match [" + i + "]",
+          title: this.getTitle() + "[" + i + "]",
           methodName: method.name,
           params,
           url,

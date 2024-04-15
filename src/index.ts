@@ -6,17 +6,21 @@ import ConsoleReporter from "./reporters/console";
 import JsonReporter from "./reporters/json";
 import EmptyReporter from "./reporters/emptyReporter";
 import Rule from "./rules/rule";
+import ConsoleRuleReporter from "./reporters/console-rule";
+import ConsoleStreamingReporter from "./reporters/console-streaming";
 
 const reporters = {
   console: ConsoleReporter,
   json: JsonReporter,
   empty: EmptyReporter,
+  "console-streaming": ConsoleStreamingReporter,
+  "console-rule": ConsoleRuleReporter,
 };
 
 const transports = {
   http: HTTPTransport,
 };
-type ReporterString = "console" | "json" | "empty";
+type ReporterString = "console" | "json" | "empty" | "console-streaming" | "console-rule";
 interface IOptions {
   openrpcDocument: OpenrpcDocument;
   skip?: string[];

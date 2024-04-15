@@ -131,6 +131,9 @@ describe("coverage", () => {
         only: ["foo", "bar"],
       });
       class MyCustomRule implements Rule {
+        getTitle(): string {
+          return "My custom rule";
+        }
         getCalls(openrpcDocument: OpenrpcDocument, method: any) {
           return [];
         }

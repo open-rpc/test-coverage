@@ -19,10 +19,23 @@ const getExpectedString = (ex: Call) => {
 };
 
 class ConsoleReporter implements Reporter {
+  private metrics: {
+    success: number;
+    error: number;
+  }
+
+  constructor() {
+    this.metrics = {
+      success: 0,
+      error: 0
+    };
+  }
 
   onBegin(options: IOptions, calls: Call[]) {}
   onTestBegin(options: IOptions, call: Call) {}
-  onTestEnd(options: IOptions, call: Call) {}
+  onTestEnd(options: IOptions, call: Call) {
+
+  }
   onEnd(options: IOptions, calls: Call[]) {
     const metrics = {
       success: 0,
@@ -48,6 +61,7 @@ class ConsoleReporter implements Reporter {
               colors.bold(colors.green("✓")),
               colors.magenta("-"),
               colors.blue(`${methodName}(${JSON.stringify(ex.params)})`),
+              colors.white(((ex.timings!.endTime! - ex.timings!.startTime!) / 1000).toString() + "s"),
             );
           } else {
             metrics.error++;
@@ -56,7 +70,8 @@ class ConsoleReporter implements Reporter {
               "\t",
               colors.bold(colors.red("X")),
               colors.magenta("-"),
-              colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`))
+              colors.bgRed(colors.blue(`${methodName}(${JSON.stringify(ex.params)})`)),
+              colors.white(((ex.timings!.endTime! - ex.timings!.startTime!) / 1000).toString() + "s")
             );
             console.log(
               colors.magenta("\t\t\t \->"),
@@ -74,7 +89,7 @@ class ConsoleReporter implements Reporter {
               console.log(
                 colors.magenta("\t\t\t \->"),
                 colors.white.underline("instead received: "),
-                colors.red(JSON.stringify(ex.result || ex.error))
+                colors.red(JSON.stringify(ex)),
               );
 
               if (ex.reason) {
@@ -92,6 +107,7 @@ class ConsoleReporter implements Reporter {
       .value();
 
     console.log("==========");
+    console.log("Total Time: ", colors.green((calls.reduce((m, {timings}) => m + (timings!.endTime! - timings!.startTime!), 0) / 1000).toString() + "s"));
     console.log("Success: ", colors.green(metrics.success.toString()));
     console.log("Errors: ", colors.red(metrics.error.toString()));
     console.log("==========");

@@ -16,6 +16,9 @@ class ExamplesRule implements Rule {
     this.skip = options?.skip;
     this.only = options?.only;
   }
+  getTitle() {
+    return "Generate params from examples and expect results to match"
+  }
   getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] {
     if (this.skip && this.skip.includes(method.name)) {
       return [];
@@ -33,12 +36,11 @@ class ExamplesRule implements Rule {
             : p;
         calls.push({
           title:
-            method.name +
-            " > example params and expect result to match: " +
+            this.getTitle() + " " +
             ex.name,
           methodName: method.name,
           params,
-          url: "",
+          url: openrpcDocument.servers?.[0].url || "",
           resultSchema: (method.result as ContentDescriptorObject).schema,
           expectedResult: (ex.result as ExampleObject).value,
         });
@@ -47,7 +49,7 @@ class ExamplesRule implements Rule {
     return calls;
   }
   validateCall(call: Call): Call {
-    if (call.expectedResult) {
+    if (call.expectedResult !== undefined && call.result !== undefined) {
       call.valid = isEqual(
         call.expectedResult,
         call.result

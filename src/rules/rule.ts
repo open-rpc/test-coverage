@@ -3,6 +3,7 @@ import { Call, IOptions } from "../coverage";
 
 interface Rule {
   onBegin?(options: IOptions): Promise<void> | void;
+  getTitle(): string;
   getCalls(openrpcDocument: OpenrpcDocument, method: MethodObject): Call[] | Promise<Call[]>;
   validateCall(call: Call): Promise<Call> | Call;
   onEnd?(options: IOptions, calls: Call[]): void;
