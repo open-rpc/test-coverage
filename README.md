@@ -16,7 +16,6 @@ Need help or have a question? Join us on [Discord](https://discord.gg/gREUKuF)!
 ## The Problem
 Even after writing your OpenRPC Document, you want to test that the OpenRPC Document does represent an actual API.
 
-
 ## Solution
 
 - generate fake data for the OpenRPC Documents method parameters schemas
