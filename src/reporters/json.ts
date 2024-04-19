@@ -1,3 +1,4 @@
+import { JSONSchemaObject } from '@open-rpc/meta-schema';
 import { Call, IOptions } from '../coverage';
 import Reporter from './reporter';
 
@@ -8,11 +9,13 @@ class JsonReporter implements Reporter {
   onTestEnd(options: IOptions, call: Call) {}
 
   onEnd(options: IOptions, calls: Call[]) {
-    const failed = calls.filter((ec) => !ec.valid);
-
-    const passed = calls.filter((ec) => ec.valid);
-
-    console.log(JSON.stringify(calls, undefined, 4));
+    const massaged: any = calls.map((c) => {
+      return {
+        ...c,
+        rule: c.rule?.getTitle(),
+      };
+    });
+    console.log(JSON.stringify(massaged, undefined, 4));
   }
 }
 

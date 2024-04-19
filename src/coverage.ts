@@ -16,8 +16,12 @@ export interface IOptions {
   transport(url: string, method: string, params: any[]): PromiseLike<any>;
   reporters: Reporter[];
 }
-
+export interface Attachment {
+  type: "image" | "text";
+  data: string;
+}
 export interface Call {
+  id?: number;
   methodName: string;
   params: any[];
   url: string;
@@ -34,6 +38,7 @@ export interface Call {
   };
   title: string;
   rule?: Rule;
+  attachments?: Attachment[];
   timings?: {
     startTime?: number;
     endTime?: number;
@@ -49,6 +54,8 @@ export interface Call {
     validateCallEnd?: number;
   }
 }
+
+let id = 0;
 
 export default async (options: IOptions) => {
   const filteredMethods = (options.openrpcDocument.methods as MethodObject[])
@@ -84,6 +91,7 @@ export default async (options: IOptions) => {
         _calls.forEach((call) => {
           // this adds the rule after the fact, it's a bit of a hack
           call.rule = rule;
+          call.id = id++;
         });
         return _calls;
       }
@@ -109,6 +117,9 @@ export default async (options: IOptions) => {
     }
     // lifecycle methods could be async or sync
     await Promise.resolve(call.rule?.beforeRequest?.(options, call));
+    if (call.timings) {
+      call.timings.beforeRequestEnd = Date.now();
+    }
 
     // transport is async but the await needs to happen later
     // so that afterRequest is run immediately after the request is made
