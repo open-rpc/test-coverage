@@ -110,7 +110,7 @@ const mockSchema = {
           params: [],
           result: {
             name: "fooResult",
-            value: true,
+            value: false,
           },
         },
       ],

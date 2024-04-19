@@ -6,6 +6,7 @@ import {Call, IOptions} from "../coverage";
 import _ from "lodash";
 import Reporter from "./reporter";
 
+
 const getExpectedString = (ex: Call) => {
   let resSchemaID;
   if (ex.resultSchema === true) { resSchemaID = "true"; }

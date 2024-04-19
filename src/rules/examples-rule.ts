@@ -54,6 +54,9 @@ class ExamplesRule implements Rule {
         call.expectedResult,
         call.result
       );
+      if (!call.valid) {
+        call.reason = `expected ${JSON.stringify(call.expectedResult)} but got ${JSON.stringify(call.result)}`;
+      }
     }
     return call;
   }
