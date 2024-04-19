@@ -31,17 +31,14 @@ class HtmlReporter implements Reporter {
         rule: c.rule?.getTitle(),
       };
     });
-    const htmlReportAppPath = path.resolve(
-      __dirname,
-      "../../node_modules/@open-rpc/html-reporter-react/"
-    );
+    const htmlReportAppPath = require.resolve("@open-rpc/html-reporter-react");
     const destinationPath = this.destination + "/index.html";
 
     await fs.promises.mkdir(this.destination, { recursive: true });
 
     // Copying the HTML file to the desired directory.
     await fs.promises.copyFile(
-      `${htmlReportAppPath}/dist/index.html`,
+      htmlReportAppPath.replace("index.js", "index.html"),
       destinationPath
     );
 
