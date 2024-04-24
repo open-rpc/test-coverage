@@ -67,7 +67,6 @@ class ExamplesRule implements Rule {
           return call;
         } catch (e: any) {
           call.valid = false;
-          call.reason = e.message;
         }
       }
       if (!call.valid) {
