@@ -122,7 +122,7 @@ describe("coverage", () => {
   describe("rules", () => {
     it("can call multiple rules with different async or sync lifecycle functions", async () => {
       const reporter = new EmptyReporter();
-      const transport = () => Promise.resolve({});
+      const transport = () => Promise.resolve({result: false});
       const openrpcDocument = mockSchema;
       const exampleRule = new ExamplesRule({ skip: ["foo"], only: ["baz"] });
       const jsonSchemaFakerRule = new JsonSchemaFakerRule({ skip: ["baz"], only: [] });
