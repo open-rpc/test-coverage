@@ -3,6 +3,7 @@ import { Call, IOptions } from "../coverage";
 import { isEqual } from "lodash";
 import Rule from "./rule";
 import paramsToObj from "../utils/params-to-obj";
+import Ajv from "ajv";
 
 interface RulesOptions {
   skip: string[];
@@ -54,6 +55,21 @@ class ExamplesRule implements Rule {
         call.expectedResult,
         call.result
       );
+      if (!call.valid) {
+        // try to use ajv to check schema instead
+        try {
+          const ajv = new Ajv();
+          const validate = ajv.compile(call.resultSchema);
+          call.valid = validate(call.result);
+          if (!call.valid) {
+            call.reason = `expected ${JSON.stringify(call.expectedResult)} but got ${JSON.stringify(call.result)} and schema validation failed: ${JSON.stringify(validate.errors)}`;
+          }
+          return call;
+        } catch (e: any) {
+          call.valid = false;
+          call.reason = e.message;
+        }
+      }
       if (!call.valid) {
         call.reason = `expected ${JSON.stringify(call.expectedResult)} but got ${JSON.stringify(call.result)}`;
       }
