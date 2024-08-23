@@ -74,7 +74,7 @@ class ExamplesRule implements Rule {
       }
     } else if (call.error) {
       call.valid = false;
-      call.reason = `expected ${JSON.stringify(call.expectedResult)} but got an error: ${JSON.stringify(call.error.message)}`;
+      call.reason = `expected ${JSON.stringify(call.expectedResult)} but got an error: ${JSON.stringify(call.error)}`;
     } else {
       call.valid = false;
     }

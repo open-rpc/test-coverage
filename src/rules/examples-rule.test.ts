@@ -219,5 +219,6 @@ describe("ExamplesRule", () => {
     };
     const result = rule.validateCall(calls[0]);
     expect(result.valid).toBe(false);
+    expect(result.reason).toMatch('expected "potato" but got an error: {"code":123,"message":"error","data":{}}');
   });
 });
