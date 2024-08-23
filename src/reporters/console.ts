@@ -76,7 +76,7 @@ class ConsoleReporter implements Reporter {
             console.log(
               colors.magenta("\t\t\t \->"),
               colors.white.underline("Expected result:"),
-              colors.white(expected),
+              colors.white(expected?.toString() || ""),
             );
 
             if (ex.requestError) {

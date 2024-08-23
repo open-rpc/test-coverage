@@ -1,5 +1,5 @@
 import colors from "colors";
-import { JSONSchemaObject } from "@open-rpc/meta-schema";
+import { JSONSchemaObject, MethodObject } from "@open-rpc/meta-schema";
 import { Call, IOptions } from "../coverage";
 import _ from "lodash";
 import Reporter from "./reporter";
@@ -85,7 +85,7 @@ class ConsoleRuleReporter implements Reporter {
             console.log(
               colors.magenta("\t\t\t \->"),
               colors.white.underline("Expected result:"),
-              colors.white(expected),
+              colors.white(expected?.toString() || ""),
             );
 
             if (ex.requestError) {
@@ -146,7 +146,7 @@ class ConsoleRuleReporter implements Reporter {
     const failedMethods = Object.keys(failedCallsByMethod);
 
     //take into account failed methods
-    const missingMethods: string[] = options.openrpcDocument.methods
+    const missingMethods: string[] = (options.openrpcDocument.methods as MethodObject[])
       .map(({ name }) => name)
       .filter((methodName) => !passingMethods.includes(methodName))
       .filter((methodName) => !failedMethods.includes(methodName));
