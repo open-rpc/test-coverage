@@ -162,4 +162,63 @@ describe("ExamplesRule", () => {
     const result = rule.validateCall(calls[0]);
     expect(result.valid).toBe(false);
   });
+  it("should handle errors", () => {
+    const rule = new ExamplesRule();
+    const openrpcDocument = {
+      openrpc: "1.0.0",
+      info: {
+        title: "my api",
+        version: "0.0.0-development",
+      },
+      servers: [
+        {
+          name: "my api",
+          url: "http://localhost:3333",
+        },
+      ],
+      methods: [
+        {
+          name: "foo",
+          params: [],
+          result: {
+            name: "fooResult",
+            schema: {
+              type: "string",
+              unevaluatedProperties: false,
+            },
+          },
+          examples: [
+            {
+              name: "fooExample",
+              summary: "foo example",
+              description: "this is an example of foo",
+              params: [
+                {
+                  name: "barParam",
+                  value: "bar",
+                },
+                {
+                  name: "barParam2",
+                  value: "bar",
+                }
+              ],
+              result: {
+                name: "fooResult",
+                value: "potato",
+              }
+            }
+          ]
+        },
+      ],
+    } as any;
+    const calls = rule.getCalls(openrpcDocument, openrpcDocument.methods[0]);
+    calls[0].error = {
+      code: 123,
+      message: "error",
+      data: {}
+    };
+    const result = rule.validateCall(calls[0]);
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch('expected "potato" but got an error: {"code":123,"message":"error","data":{}}');
+  });
 });

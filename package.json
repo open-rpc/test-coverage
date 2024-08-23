@@ -20,6 +20,7 @@
   "dependencies": {
     "@open-rpc/html-reporter-react": "^0.0.4",
     "@open-rpc/schema-utils-js": "^1.16.2",
+    "@open-rpc/meta-schema": "^1.14.6",
     "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.162",
     "ajv": "^7.0.0",
@@ -30,7 +31,6 @@
     "lodash": "^4.17.20"
   },
   "devDependencies": {
-    "@open-rpc/meta-schema": "^1.13.13",
     "@types/jest": "^29.5.12",
     "eslint": "^8.57.0",
     "jest": "^29.7.0",

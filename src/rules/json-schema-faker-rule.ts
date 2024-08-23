@@ -66,7 +66,7 @@ class JsonSchemaFakerRule implements Rule {
       ajv.validate(call.resultSchema, call.result);
       if (ajv.errors && ajv.errors.length > 0) {
         call.valid = false;
-        call.reason = JSON.stringify(ajv.errors);
+        call.reason = `expected:\n ${JSON.stringify(call.result, null, 2)}\n to match schema: \n${JSON.stringify(call.resultSchema, null, 2)}\nbut got:\n ${JSON.stringify(ajv.errors, null, 2)}`;
       } else {
         call.valid = true;
       }
