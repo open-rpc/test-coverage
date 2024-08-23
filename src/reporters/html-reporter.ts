@@ -17,6 +17,9 @@ class HtmlReporter implements Reporter {
     if (options?.autoOpen !== undefined) {
       this.autoOpen = options.autoOpen;
     }
+    if (options?.destination !== undefined) {
+      this.destination = options.destination;
+    }
   }
 
   onBegin(options: IOptions, calls: Call[]) {}
