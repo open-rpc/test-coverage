@@ -72,6 +72,9 @@ class ExamplesRule implements Rule {
       if (!call.valid) {
         call.reason = `expected ${JSON.stringify(call.expectedResult)} but got ${JSON.stringify(call.result)}`;
       }
+    } else if (call.error) {
+      call.valid = false;
+      call.reason = `expected ${JSON.stringify(call.expectedResult)} but got an error: ${JSON.stringify(call.error.message)}`;
     }
     return call;
   }
