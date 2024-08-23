@@ -1,4 +1,5 @@
 
+import { Call } from "../coverage";
 import JsonSchemaFakerRule from "./json-schema-faker-rule";
 
 describe("JsonSchemaFakerRule", () => {
@@ -37,7 +38,7 @@ describe("JsonSchemaFakerRule", () => {
   });
   it("should handle errors within ajv when validating", () => {
     const rule = new JsonSchemaFakerRule();
-    const Call = {
+    const call: Call = {
       title: 'test call',
       methodName: "foo",
       params: [],
@@ -47,13 +48,13 @@ describe("JsonSchemaFakerRule", () => {
         unevaluatedProperties: false,
       },
     };
-    const result = rule.validateCall(Call);
+    const result = rule.validateCall(call);
     expect(result.valid).toBe(false);
     expect(result.reason).toMatch('unknown keyword: "unevaluatedProperties"');
   });
   it("should produce a readable error for reason", () => {
     const rule = new JsonSchemaFakerRule();
-    const Call = {
+    const call: Call = {
       title: 'test call',
       methodName: "foo",
       params: [],
@@ -63,9 +64,10 @@ describe("JsonSchemaFakerRule", () => {
       },
       result: "potato",
     };
-    const result = rule.validateCall(Call);
+    const result = rule.validateCall(call);
     expect(result.valid).toBe(false);
     expect(result.reason).toContain('expected:\n "potato"');
-    expect(result.reason).toContain('  to match schema: \n{\n  "type":"boolean"\n}');
+    expect(result.reason).toContain('to match schema:');
+    expect(result.reason).toContain(JSON.stringify(call.resultSchema, null, 2));
   });
 });
