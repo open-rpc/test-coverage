@@ -76,7 +76,7 @@ export default async (options: IOptions) => {
   }
 
   for (const reporter of options.reporters) {
-    reporter.onBegin(options, calls);
+    await Promise.resolve(reporter.onBegin(options, calls));
   }
 
   for (const rule of rules) {
@@ -110,7 +110,7 @@ export default async (options: IOptions) => {
       }
     }
     for (const reporter of options.reporters) {
-      reporter.onTestBegin(options, call);
+      await Promise.resolve(reporter.onTestBegin(options, call));
     }
     if (call.timings) {
       call.timings.beforeRequestStart = Date.now();
@@ -162,7 +162,7 @@ export default async (options: IOptions) => {
       call.timings.endTime = Date.now();
     }
     for (const reporter of options.reporters) {
-      reporter.onTestEnd(options, call);
+      await Promise.resolve(reporter.onTestEnd(options, call));
     }
   }
 
@@ -171,7 +171,7 @@ export default async (options: IOptions) => {
   }
 
   for (const reporter of options.reporters) {
-    reporter.onEnd(options, calls);
+    await Promise.resolve(reporter.onEnd(options, calls));
   }
   return calls;
 };
