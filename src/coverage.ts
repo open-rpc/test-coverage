@@ -75,13 +75,15 @@ export default async (options: IOptions) => {
     rules = options.rules;
   }
 
-  for (const reporter of options.reporters) {
-    reporter.onBegin(options, calls);
-  }
+  await Promise.all(
+    options.reporters.map((reporter) =>
+      Promise.resolve(reporter.onBegin(options, calls))
+    )
+  );
 
-  for (const rule of rules) {
-    await Promise.resolve(rule.onBegin?.(options));
-  }
+  await Promise.all(
+    rules.map((rule) => Promise.resolve(rule.onBegin?.(options)))
+  );
 
   // getCalls could be async or sync
   const callsPromises = await Promise.all(filteredMethods.map((method) =>
@@ -109,9 +111,11 @@ export default async (options: IOptions) => {
         getCallsEnd: Date.now(),
       }
     }
-    for (const reporter of options.reporters) {
-      reporter.onTestBegin(options, call);
-    }
+    await Promise.all(
+      options.reporters.map((reporter) =>
+        Promise.resolve(reporter.onTestBegin(options, call))
+      )
+    );
     if (call.timings) {
       call.timings.beforeRequestStart = Date.now();
     }
@@ -161,17 +165,21 @@ export default async (options: IOptions) => {
       call.timings.afterResponseEnd = Date.now();
       call.timings.endTime = Date.now();
     }
-    for (const reporter of options.reporters) {
-      reporter.onTestEnd(options, call);
-    }
+    await Promise.all(
+      options.reporters.map((reporter) =>
+        Promise.resolve(reporter.onTestEnd(options, call))
+      )
+    );
   }
 
-  for (const rule of rules) {
-    await Promise.resolve(rule.onEnd?.(options, calls));
-  }
+  await Promise.all(
+    rules.map((rule) => Promise.resolve(rule.onEnd?.(options, calls)))
+  );
 
-  for (const reporter of options.reporters) {
-    reporter.onEnd(options, calls);
-  }
+  await Promise.all(
+    options.reporters.map((reporter) =>
+      Promise.resolve(reporter.onEnd(options, calls))
+    )
+  );
   return calls;
 };
