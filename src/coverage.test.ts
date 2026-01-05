@@ -249,6 +249,136 @@ describe("coverage", () => {
 
       await expect(coverage(options)).resolves.toBeDefined();
     });
+    it("runs lifecycle hooks and preserves existing timings", async () => {
+      const onBegin = jest.fn();
+      const onEnd = jest.fn();
+      const beforeRequest = jest.fn();
+      const afterRequest = jest.fn();
+      const afterResponse = jest.fn();
+      const validateCall = jest.fn((call: Call) => {
+        call.valid = true;
+        return call;
+      });
+      class LifecycleRule implements Rule {
+        onBegin = onBegin;
+        onEnd = onEnd;
+        beforeRequest = beforeRequest;
+        afterRequest = afterRequest;
+        afterResponse = afterResponse;
+        getTitle(): string {
+          return "Lifecycle rule";
+        }
+        getCalls(openrpcDocument: OpenrpcDocument, method: any) {
+          return [
+            {
+              title: "lifecycle",
+              methodName: "foo",
+              params: [],
+              url: "http://localhost:3333",
+              resultSchema: { type: "boolean" } as any,
+              timings: { startTime: 123 },
+            },
+          ];
+        }
+        validateCall = validateCall;
+      }
+
+      const rule = new LifecycleRule();
+      const transport = () => Promise.resolve({ result: true });
+      await coverage({
+        reporters: [new EmptyReporter()],
+        transport,
+        openrpcDocument: mockSchema,
+        skip: [],
+        only: ["foo"],
+        rules: [rule],
+      });
+
+      expect(onBegin).toHaveBeenCalled();
+      expect(beforeRequest).toHaveBeenCalled();
+      expect(afterRequest).toHaveBeenCalled();
+      expect(afterResponse).toHaveBeenCalled();
+      expect(validateCall).toHaveBeenCalled();
+      expect(onEnd).toHaveBeenCalled();
+    });
+    it("handles transport failures without validating the call", async () => {
+      const validateCall = jest.fn();
+      class RejectingRule implements Rule {
+        getTitle(): string {
+          return "Rejecting rule";
+        }
+        getCalls(openrpcDocument: OpenrpcDocument, method: any) {
+          return [
+            {
+              title: "rejecting",
+              methodName: "foo",
+              params: [],
+              url: "http://localhost:3333",
+              resultSchema: { type: "boolean" } as any,
+            },
+          ];
+        }
+        validateCall = validateCall;
+      }
+      const transport = () => Promise.reject(new Error("transport failed"));
+      await coverage({
+        reporters: [new EmptyReporter()],
+        transport,
+        openrpcDocument: mockSchema,
+        skip: [],
+        only: ["foo"],
+        rules: [new RejectingRule()],
+      });
+      expect(validateCall).not.toHaveBeenCalled();
+    });
+    it("skips rule lifecycle when the call rule is removed", async () => {
+      const beforeRequest = jest.fn();
+      const afterRequest = jest.fn();
+      const afterResponse = jest.fn();
+      const validateCall = jest.fn();
+      class SkippedRule implements Rule {
+        getTitle(): string {
+          return "Skipped rule";
+        }
+        getCalls(openrpcDocument: OpenrpcDocument, method: any) {
+          return [
+            {
+              title: "skipped",
+              methodName: "foo",
+              params: [],
+              url: "http://localhost:3333",
+              resultSchema: { type: "boolean" } as any,
+            },
+          ];
+        }
+        beforeRequest = beforeRequest;
+        afterRequest = afterRequest;
+        afterResponse = afterResponse;
+        validateCall = validateCall;
+      }
+      const reporter = new (class CustomReporter {
+        onBegin() {}
+        onTestBegin(options: IOptions, call: Call) {
+          call.rule = undefined;
+        }
+        onTestEnd() {}
+        onEnd() {}
+      })();
+      const transport = () => Promise.resolve({ result: true });
+      await coverage({
+        reporters: [reporter],
+        transport,
+        openrpcDocument: mockSchema,
+        skip: [],
+        only: ["foo"],
+        rules: [new SkippedRule()],
+      });
+
+      expect(beforeRequest).not.toHaveBeenCalled();
+      expect(afterRequest).not.toHaveBeenCalled();
+      expect(afterResponse).not.toHaveBeenCalled();
+      expect(validateCall).not.toHaveBeenCalled();
+    });
   });
   describe("transport", () => {
     it("can call the transport", async () => {
