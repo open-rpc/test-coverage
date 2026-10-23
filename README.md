@@ -1,7 +1,7 @@
 # OpenRPC Test Coverage
 <center>
   <span>
-    <img alt="CircleCI branch" src="https://img.shields.io/circleci/project/github/open-rpc/test-coverage/master.svg">
+    <img alt="GitHub Actions" src="https://github.com/open-rpc/test-coverage/actions/workflows/ci.yml/badge.svg?branch=master">
     <img src="https://codecov.io/gh/open-rpc/test-coverage/branch/master/graph/badge.svg" />
     <img alt="npm" src="https://img.shields.io/npm/dt/@open-rpc/test-coverage.svg" />
     <img alt="GitHub release" src="https://img.shields.io/github/release/open-rpc/test-coverage.svg" />
@@ -39,9 +39,59 @@ You can write custom reporters to output the results of the test coverage tool i
 
 ```
 
-npm install -g @open-rpc/test-coverage
+bun add --global @open-rpc/test-coverage
 
 ```
+
+Requires Bun 1.4.2 or later. The CLI runs with Bun. The built library supports
+Node.js 22.14.0 or later and uses native `fetch`.
+
+### Breaking development stack change
+
+The CLI now requires Bun on `PATH`. Install Bun before updating the package.
+The library keeps its CommonJS entry point and existing `build/` import paths.
+The next release must use a breaking-change commit, for example
+`feat!: migrate tooling and CLI to Bun`, with this commit footer:
+
+```text
+BREAKING CHANGE: The CLI requires Bun 1.4.2 or later. The Node library requires Node.js 22.14.0 or later.
+```
+
+### Development
+
+```sh
+bun install --frozen-lockfile
+bun run test
+bun run build
+```
+
+`bun test` runs the unit tests. `bun run test` also writes coverage to
+`coverage/lcov.info`, runs ESLint, and checks types. Use `bun run lint` or
+`bun run typecheck` to run those checks on their own.
+
+`bun run build` uses Bun to build CommonJS modules in `build/`. TypeScript emits
+the `.d.ts` files. Test files are excluded from the build. Run the local CLI with
+`bun bin/cli.js --help` after building.
+
+GitHub Actions runs the tests, lint, type checks, and build for pull requests and
+pushes to `master`. Actions are pinned to commit SHAs, and the Codecov uploader
+version is pinned. Codecov uses GitHub OIDC, so no Codecov secret is needed.
+Fork and Dependabot pull requests run all checks but skip the coverage upload.
+
+### Releases
+
+Releases require a manual run and use npm trusted publishing with GitHub OIDC.
+The package's trusted publisher must point to `open-rpc/test-coverage` and the
+workflow filename `ci.yml`, allow direct publishing, and leave the environment
+name blank. No npm token secret is needed. GitHub supplies `GITHUB_TOKEN`
+automatically for release notes and tags.
+
+After merging to `master`, open **Actions → CI → Run workflow** and select
+`master`. The release job runs only for this manual event on `master`, after
+tests and build pass. A normal push or pull request does not publish a package.
+The release job grants `id-token: write`, uses the Node.js version in
+`.node-version` for npm publishing, and runs `bun run release`. The release tool
+and its dependencies are pinned in `bun.lock`.
 
 
 ### Usage:

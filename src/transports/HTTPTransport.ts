@@ -1,9 +1,8 @@
-import fetch from "isomorphic-fetch";
 import { ITransport } from "./ITransport";
 let id = 1;
 
 const httpTransport: ITransport = async (url: string, method: string, params: any[]) => {
-  return fetch(url, {
+  const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -12,9 +11,8 @@ const httpTransport: ITransport = async (url: string, method: string, params: an
       method,
       params,
     }),
-  }).then((r: any) => {
-    return r.json();
   });
+  return response.json();
 };
 
 export default httpTransport;

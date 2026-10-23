@@ -29,14 +29,14 @@ interface IOptions {
   openrpcDocument: OpenrpcDocument;
   skip?: string[];
   only?: string[];
-  reporters: ReporterStringOrReport[];
+  reporters?: ReporterStringOrReport[];
   rules?: Rule[];
   transport: "http" | ITransport;
 }
 
 export default async (options: IOptions) => {
   const transport = typeof options.transport === "function" ? options.transport : transports[options.transport || "http"];
-  let reporterInstances = options.reporters.map((reporter) => {
+  let reporterInstances = (options.reporters ?? []).map((reporter) => {
     if (typeof reporter === "string") {
       return new reporters[reporter as ReporterString];
     }

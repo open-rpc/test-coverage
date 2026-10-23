@@ -4,7 +4,6 @@ import {
   MethodObject,
 } from "@open-rpc/meta-schema";
 import {Call, IOptions} from "../coverage";
-import _ from "lodash";
 import Reporter from "./reporter";
 
 
@@ -40,7 +39,6 @@ class ConsoleStreamingReporter implements Reporter {
 
     if (ex.valid) {
       this.metrics.success++;
-      const expected = getExpectedString(ex);
       const timeDiff = (ex.timings!.endTime! - ex.timings!.startTime!);
       const threshold = 1000;
       const timeDiffColor = timeDiff <= threshold ? 'green' : 'yellow'; // Fast tests are green, slow tests are red
