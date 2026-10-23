@@ -68,6 +68,8 @@ import Rule from "@open-rpc/test-coverage/build/rules/rule.js";
 
 TypeScript types ship with the package. Use `NodeNext` module resolution in
 Node.js projects, or `Bundler` in projects that use a bundler.
+Document types come from `@open-rpc/spec-types` and support OpenRPC 1.3 and 1.4.
+Schema-utils uses `@open-rpc/spec` for document validation.
 
 ### Breaking changes
 

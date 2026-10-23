@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
 import coverage, { Call, IOptions } from "./coverage.js";
-import { OpenrpcDocument } from "@open-rpc/meta-schema";
+import type { OpenrpcDocument } from "./types.js";
 import EmptyReporter from "./reporters/emptyReporter.js";
 import Rule from "./rules/rule.js";
 import ExamplesRule from "./rules/examples-rule.js";

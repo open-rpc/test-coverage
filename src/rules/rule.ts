@@ -1,4 +1,4 @@
-import { MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
+import type { MethodObject, OpenrpcDocument } from "../types.js";
 import { Call, IOptions } from "../coverage.js";
 
 interface Rule {
