@@ -2,9 +2,9 @@ import colors from "colors";
 import {
   JSONSchemaObject,
 } from "@open-rpc/meta-schema";
-import {Call, IOptions} from "../coverage";
+import {Call, IOptions} from "../coverage.js";
 import _ from "lodash";
-import Reporter from "./reporter";
+import Reporter from "./reporter.js";
 
 const getExpectedString = (ex: Call) => {
   let resSchemaID;

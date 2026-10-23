@@ -1,5 +1,5 @@
 import { MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { Call, IOptions } from "../coverage";
+import { Call, IOptions } from "../coverage.js";
 
 interface Rule {
   onBegin?(options: IOptions): Promise<void> | void;

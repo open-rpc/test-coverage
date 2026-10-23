@@ -3,10 +3,10 @@ import {
   JSONSchema,
   MethodObject,
 } from "@open-rpc/meta-schema";
-import Reporter from "./reporters/emptyReporter";
-import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
-import ExamplesRule from "./rules/examples-rule";
-import Rule from "./rules/rule";
+import Reporter from "./reporters/emptyReporter.js";
+import JsonSchemaFakerRule from "./rules/json-schema-faker-rule.js";
+import ExamplesRule from "./rules/examples-rule.js";
+import Rule from "./rules/rule.js";
 
 export interface IOptions {
   openrpcDocument: OpenrpcDocument;

@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
-import coverage, { Call, IOptions } from "./coverage";
+import coverage, { Call, IOptions } from "./coverage.js";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
-import EmptyReporter from "./reporters/emptyReporter";
-import Rule from "./rules/rule";
-import ExamplesRule from "./rules/examples-rule";
-import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
+import EmptyReporter from "./reporters/emptyReporter.js";
+import Rule from "./rules/rule.js";
+import ExamplesRule from "./rules/examples-rule.js";
+import JsonSchemaFakerRule from "./rules/json-schema-faker-rule.js";
 
 const mockSchema = {
   openrpc: "1.0.0",

@@ -1,7 +1,8 @@
-import { Call, IOptions } from "../coverage";
-import Reporter from "./reporter";
-import fs from "fs";
-import { execSync } from "child_process";
+import { Call, IOptions } from "../coverage.js";
+import Reporter from "./reporter.js";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
 
 interface HtmlReporterOptions {
   autoOpen?: boolean;
@@ -33,7 +34,7 @@ class HtmlReporter implements Reporter {
         rule: c.rule?.getTitle(),
       };
     });
-    const htmlReportAppPath = require.resolve("@open-rpc/html-reporter-react");
+    const htmlReportAppPath = fileURLToPath(import.meta.resolve("@open-rpc/html-reporter-react"));
     const destinationPath = this.destination + "/index.html";
 
     await fs.promises.mkdir(this.destination, { recursive: true });

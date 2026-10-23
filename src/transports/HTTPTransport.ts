@@ -1,4 +1,4 @@
-import { ITransport } from "./ITransport";
+import { ITransport } from "./ITransport.js";
 let id = 1;
 
 const httpTransport: ITransport = async (url: string, method: string, params: any[]) => {

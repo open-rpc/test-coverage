@@ -1,7 +1,7 @@
 import { rm } from "node:fs/promises";
 
 const entrypoints = Array.from(new Bun.Glob("src/**/*.ts").scanSync())
-  .filter((file) => !file.endsWith(".test.ts"));
+  .filter((file) => !file.endsWith(".test.ts") && !file.endsWith(".d.ts"));
 
 await rm("build", { recursive: true, force: true });
 
@@ -10,7 +10,7 @@ const result = await Bun.build({
   root: "src",
   outdir: "build",
   target: "node",
-  format: "cjs",
+  format: "esm",
   packages: "external",
   // Keep public module paths and shared class identities intact.
   external: ["./*", "../*"],

@@ -1,15 +1,15 @@
-import coverage from "./coverage";
-import HTTPTransport from "./transports/HTTPTransport";
+import coverage from "./coverage.js";
+import HTTPTransport from "./transports/HTTPTransport.js";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
-import { ITransport } from "./transports/ITransport";
-import ConsoleReporter from "./reporters/console";
-import JsonReporter from "./reporters/json";
-import EmptyReporter from "./reporters/emptyReporter";
-import Rule from "./rules/rule";
-import ConsoleRuleReporter from "./reporters/console-rule";
-import ConsoleStreamingReporter from "./reporters/console-streaming";
-import HtmlReporter from "./reporters/html-reporter";
-import Reporter from "./reporters/reporter";
+import { ITransport } from "./transports/ITransport.js";
+import ConsoleReporter from "./reporters/console.js";
+import JsonReporter from "./reporters/json.js";
+import EmptyReporter from "./reporters/emptyReporter.js";
+import Rule from "./rules/rule.js";
+import ConsoleRuleReporter from "./reporters/console-rule.js";
+import ConsoleStreamingReporter from "./reporters/console-streaming.js";
+import HtmlReporter from "./reporters/html-reporter.js";
+import Reporter from "./reporters/reporter.js";
 const reporters = {
   console: ConsoleReporter,
   json: JsonReporter,

@@ -1,4 +1,4 @@
-import { Call, IOptions } from "../coverage";
+import { Call, IOptions } from "../coverage.js";
 
 interface Reporter {
   onBegin(options: IOptions, calls: Call[]): void | Promise<void>;

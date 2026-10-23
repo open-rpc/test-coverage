@@ -1,5 +1,5 @@
-import { Call, IOptions } from '../coverage';
-import Reporter from './reporter';
+import { Call, IOptions } from '../coverage.js';
+import Reporter from './reporter.js';
 
 class JsonReporter implements Reporter {
   onBegin(options: IOptions, calls: Call[]) {}
