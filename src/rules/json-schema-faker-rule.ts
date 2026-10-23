@@ -1,10 +1,9 @@
 import { ContentDescriptorObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { Call } from "../coverage";
-import Ajv from "ajv";
-import Rule from "./rule";
-import paramsToObj from "../utils/params-to-obj";
-
-const jsf = require("json-schema-faker");
+import { Call } from "../coverage.js";
+import Ajv from "../utils/ajv.js";
+import Rule from "./rule.js";
+import paramsToObj from "../utils/params-to-obj.js";
+import jsf from "json-schema-faker";
 
 const getFakeParams = (params: any[]): any[] => {
   return params.map((p) => jsf.generate(p.schema));

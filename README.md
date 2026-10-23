@@ -46,16 +46,34 @@ bun add --global @open-rpc/test-coverage
 Requires Bun 1.4.2 or later. The CLI runs with Bun. The built library supports
 Node.js 22.14.0 or later and uses native `fetch`.
 
-### Breaking development stack change
+### Library
 
-The CLI now requires Bun on `PATH`. Install Bun before updating the package.
-The library keeps its CommonJS entry point and existing `build/` import paths.
-The next release must use a breaking-change commit, for example
-`feat!: migrate tooling and CLI to Bun`, with this commit footer:
+The library is ESM only. Use `import` instead of `require()`:
 
-```text
-BREAKING CHANGE: The CLI requires Bun 1.4.2 or later. The Node library requires Node.js 22.14.0 or later.
+```js
+import testCoverage from "@open-rpc/test-coverage";
+
+const calls = await testCoverage({
+  openrpcDocument,
+  transport: "http",
+  reporters: ["console"],
+});
 ```
+
+Custom rules and reporters can import modules from `build/` with a `.js` extension:
+
+```js
+import Rule from "@open-rpc/test-coverage/build/rules/rule.js";
+```
+
+TypeScript types ship with the package. Use `NodeNext` module resolution in
+Node.js projects, or `Bundler` in projects that use a bundler.
+
+### Breaking changes
+
+The library no longer provides CommonJS modules. Change `require()` calls to
+ESM imports and add `.js` to imports from `build/`. The CLI requires Bun on
+`PATH`. The library requires Node.js 22.14.0 or later, or Bun 1.4.2 or later.
 
 ### Development
 
@@ -69,7 +87,7 @@ bun run build
 `coverage/lcov.info`, runs ESLint, and checks types. Use `bun run lint` or
 `bun run typecheck` to run those checks on their own.
 
-`bun run build` uses Bun to build CommonJS modules in `build/`. TypeScript emits
+`bun run build` uses Bun to build ESM modules in `build/`. TypeScript emits
 the `.d.ts` files. Test files are excluded from the build. Run the local CLI with
 `bun bin/cli.js --help` after building.
 

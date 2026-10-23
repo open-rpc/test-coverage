@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 
-import ExamplesRule from "./examples-rule";
+import ExamplesRule from "./examples-rule.js";
 
 describe("ExamplesRule", () => {
   it("should validate example calls with ajv as the fallback", () => {

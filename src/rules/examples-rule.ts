@@ -1,9 +1,9 @@
 import { ContentDescriptorObject, ExampleObject, ExamplePairingObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { Call } from "../coverage";
-import { isEqual } from "lodash";
-import Rule from "./rule";
-import paramsToObj from "../utils/params-to-obj";
-import Ajv from "ajv";
+import { Call } from "../coverage.js";
+import lodash from "lodash";
+import Rule from "./rule.js";
+import paramsToObj from "../utils/params-to-obj.js";
+import Ajv from "../utils/ajv.js";
 
 interface RulesOptions {
   skip: string[];
@@ -51,7 +51,7 @@ class ExamplesRule implements Rule {
   }
   validateCall(call: Call): Call {
     if (call.expectedResult !== undefined && call.result !== undefined) {
-      call.valid = isEqual(
+      call.valid = lodash.isEqual(
         call.expectedResult,
         call.result
       );

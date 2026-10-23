@@ -1,6 +1,6 @@
-const tseslint = require("typescript-eslint");
+import tseslint from "typescript-eslint";
 
-module.exports = tseslint.config(
+export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     files: ["src/**/*.ts", "scripts/**/*.ts"],
@@ -12,7 +12,6 @@ module.exports = tseslint.config(
         caughtErrors: "none",
       }],
       "@typescript-eslint/no-empty-function": "off",
-      "@typescript-eslint/no-var-requires": "off",
     },
   },
 );

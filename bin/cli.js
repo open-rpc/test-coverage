@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
-const program = require('commander');
-const orpcCoverage = require('../build').default;
-const { parseOpenRPCDocument } = require('@open-rpc/schema-utils-js');
+import { program } from 'commander';
+import orpcCoverage from '../build/index.js';
+import { parseOpenRPCDocument } from '@open-rpc/schema-utils-js';
+import packageJson from '../package.json' with { type: 'json' };
 
 const getArrayFromCommaSeparated = (input) => {
   if (!input) {
@@ -11,7 +12,7 @@ const getArrayFromCommaSeparated = (input) => {
 }
 
 program
-  .version(require('./get-version'))
+  .version(packageJson.version)
   .usage('[options]')
   .option('-s, --schema [schema]', 'JSON string or a Path/Url pointing to an open rpc schema')
   .option('-r, --reporters <reporters>', 'Use the specified reporter [console] [console-rule] [console-streaming] [json] [empty] [html]. Can be a comma separated list of reporters.')

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 
-import { Call } from "../coverage";
-import JsonSchemaFakerRule from "./json-schema-faker-rule";
+import { Call } from "../coverage.js";
+import JsonSchemaFakerRule from "./json-schema-faker-rule.js";
 
 describe("JsonSchemaFakerRule", () => {
   it("should validate example calls", () => {

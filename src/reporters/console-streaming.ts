@@ -3,8 +3,8 @@ import {
   JSONSchemaObject,
   MethodObject,
 } from "@open-rpc/meta-schema";
-import {Call, IOptions} from "../coverage";
-import Reporter from "./reporter";
+import {Call, IOptions} from "../coverage.js";
+import Reporter from "./reporter.js";
 
 
 const getExpectedString = (ex: Call) => {
