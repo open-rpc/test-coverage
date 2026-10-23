@@ -1,14 +1,13 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 const program = require('commander');
 const orpcCoverage = require('../build').default;
 const { parseOpenRPCDocument } = require('@open-rpc/schema-utils-js');
 
 const getArrayFromCommaSeparated = (input) => {
-  if (input && input.split(',').length > 0) {
-    return input.split(',');
-  } else {
-    return null;
+  if (!input) {
+    return [];
   }
+  return input.split(',');
 }
 
 program

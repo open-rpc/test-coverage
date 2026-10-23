@@ -55,7 +55,6 @@ class ConsoleReporter implements Reporter {
         callsForMethod.forEach((ex) => {
           if (ex.valid) {
             metrics.success++;
-            const expected = getExpectedString(ex);
             console.log(
               "\t",
               colors.bold(colors.green("✓")),

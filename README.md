@@ -39,9 +39,44 @@ You can write custom reporters to output the results of the test coverage tool i
 
 ```
 
-npm install -g @open-rpc/test-coverage
+bun add --global @open-rpc/test-coverage
 
 ```
+
+Requires Bun 1.4.2 or later. The CLI runs with Bun. The built library supports
+Node.js 22.14.0 or later and uses native `fetch`.
+
+### Breaking change
+
+The CLI now requires Bun on `PATH`. Install Bun before updating the package.
+The library keeps its CommonJS entry point and existing `build/` import paths.
+The next release must use a breaking-change commit, for example
+`feat!: migrate tooling and CLI to Bun`, with this commit footer:
+
+```text
+BREAKING CHANGE: The CLI requires Bun 1.4.2 or later. The Node library requires Node.js 22.14.0 or later.
+```
+
+### Development
+
+```sh
+bun install --frozen-lockfile
+bun run test
+bun run build
+```
+
+`bun test` runs the unit tests. `bun run test` also writes coverage to
+`coverage/lcov.info`, runs ESLint, and checks types. Use `bun run lint` or
+`bun run typecheck` to run those checks on their own.
+
+`bun run build` uses Bun to build CommonJS modules in `build/`. TypeScript emits
+the `.d.ts` files. Test files are excluded from the build. Run the local CLI with
+`bun bin/cli.js --help` after building.
+
+CI pins the Codecov orb and uploader versions. The release tool and its
+dependencies are pinned in `bun.lock`; CI runs it with `bun run release`.
+The release job uses Node.js 24.10.0 for npm publishing. It runs only after the
+existing manual approval step.
 
 
 ### Usage:

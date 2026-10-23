@@ -1,7 +1,7 @@
+import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
 import coverage, { Call, IOptions } from "./coverage";
 import { OpenrpcDocument } from "@open-rpc/meta-schema";
 import EmptyReporter from "./reporters/emptyReporter";
-import ConsoleReporter from "./reporters/console";
 import Rule from "./rules/rule";
 import ExamplesRule from "./rules/examples-rule";
 import JsonSchemaFakerRule from "./rules/json-schema-faker-rule";
@@ -118,6 +118,10 @@ const mockSchema = {
   ],
 } as OpenrpcDocument;
 
+afterEach(() => {
+  mock.restore();
+});
+
 describe("coverage", () => {
   describe("rules", () => {
     it("can call multiple rules with different async or sync lifecycle functions", async () => {
@@ -143,12 +147,12 @@ describe("coverage", () => {
       }
       const myCustomRule = new MyCustomRule();
 
-      const getCallsSpy = jest.spyOn(exampleRule, "getCalls");
-      const getCallsCustomSpy = jest.spyOn(
+      const getCallsSpy = spyOn(exampleRule, "getCalls");
+      const getCallsCustomSpy = spyOn(
         myCustomRule,
         "getCalls"
       );
-      const getCallsJsonSchemaFakerSpy = jest.spyOn(
+      const getCallsJsonSchemaFakerSpy = spyOn(
         jsonSchemaFakerRule,
         "getCalls"
       );
@@ -167,38 +171,39 @@ describe("coverage", () => {
     });
   });
   describe("reporter", () => {
-    it("can call the reporter", (done) => {
+    it("can call the reporter", async () => {
       class CustomReporter {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
-        onEnd() {
-          done();
-        }
+        onEnd() {}
       }
+      const reporter = new CustomReporter();
+      const onEndSpy = spyOn(reporter, "onEnd");
       const transport = () => Promise.resolve();
-      coverage({
-        reporters: [new CustomReporter()],
+      await coverage({
+        reporters: [reporter],
         transport,
         openrpcDocument: mockSchema,
         skip: [],
         only: [],
       });
+      expect(onEndSpy).toHaveBeenCalledTimes(1);
     });
-    it("can call the reporter with the results", (done) => {
+    it("can call the reporter with the results", async () => {
+      expect.assertions(1);
       class CustomReporter {
         onBegin() {}
         onTestBegin() {}
         onTestEnd() {}
         onEnd(options: IOptions, calls: Call[]) {
           expect(calls[0].result).toBe(true);
-          done();
         }
       }
       const transport = async (url: string, method: string, params: any[]) => {
         return { result: true };
       };
-      coverage({
+      await coverage({
         reporters: [new CustomReporter()],
         transport,
         openrpcDocument: mockSchema,
@@ -215,7 +220,6 @@ describe("coverage", () => {
         onTestEnd() {}
         onEnd() {}
       })();
-      const spy = jest.spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
@@ -235,7 +239,6 @@ describe("coverage", () => {
         onTestEnd() {}
         onEnd() {}
       };
-      const spy = jest.spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
       const openrpcDocument = { ...mockSchema };
       openrpcDocument.servers = undefined;
@@ -252,7 +255,7 @@ describe("coverage", () => {
   });
   describe("transport", () => {
     it("can call the transport", async () => {
-      const transport = jest.fn();
+      const transport = mock();
       await coverage({
         reporters: [new EmptyReporter()],
         transport,
@@ -282,7 +285,7 @@ describe("coverage", () => {
         only: [],
       };
 
-      reporter.onBegin = jest.fn();
+      reporter.onBegin = mock();
       await coverage(options);
       expect(reporter.onBegin).toHaveBeenCalled();
     });
@@ -293,7 +296,7 @@ describe("coverage", () => {
         onTestEnd() {}
         onEnd() {}
       })();
-      const spy = jest.spyOn(reporter, "onTestBegin");
+      const spy = spyOn(reporter, "onTestBegin");
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
       const options = {
@@ -313,15 +316,15 @@ describe("coverage", () => {
       const transport = () => Promise.resolve({});
       const openrpcDocument = mockSchema;
 
-      const onBeginSpy = jest.spyOn(reporter, "onBegin");
-      const onTestBeginSpy = jest.spyOn(reporter, "onTestBegin");
-      const onTestEndSpy = jest.spyOn(reporter, "onTestEnd");
-      const onEndSpy = jest.spyOn(reporter, "onEnd");
+      const onBeginSpy = spyOn(reporter, "onBegin");
+      const onTestBeginSpy = spyOn(reporter, "onTestBegin");
+      const onTestEndSpy = spyOn(reporter, "onTestEnd");
+      const onEndSpy = spyOn(reporter, "onEnd");
 
-      const onBeginSpy2 = jest.spyOn(reporter2, "onBegin");
-      const onTestBeginSpy2 = jest.spyOn(reporter2, "onTestBegin");
-      const onTestEndSpy2 = jest.spyOn(reporter2, "onTestEnd");
-      const onEndSpy2 = jest.spyOn(reporter2, "onEnd");
+      const onBeginSpy2 = spyOn(reporter2, "onBegin");
+      const onTestBeginSpy2 = spyOn(reporter2, "onTestBegin");
+      const onTestEndSpy2 = spyOn(reporter2, "onTestEnd");
+      const onEndSpy2 = spyOn(reporter2, "onEnd");
 
       const options = {
         reporters: [reporter, reporter2],

@@ -1,16 +1,25 @@
-version: 2
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@6.1.0
 
 aliases:
   # -------------------------
   #      ALIASES: Caches
   # -------------------------
   - &restore-deps-cache
-    key: deps-cache-{{ checksum "package.json" }}
+    key: bun-v1-{{ arch }}-{{ checksum "bun.lock" }}-{{ checksum ".bun-version" }}
 
   - &save-deps-cache
-    key: deps-cache-{{ checksum "package.json" }}
+    key: bun-v1-{{ arch }}-{{ checksum "bun.lock" }}-{{ checksum ".bun-version" }}
     paths:
       - ~/test-coverage/node_modules
+
+  - &install-bun
+    name: Install Bun
+    command: |
+      curl -fsSL https://bun.com/install | bash -s "bun-v$(cat .bun-version)"
+      echo 'export PATH="$HOME/.bun/bin:$PATH"' >> "$BASH_ENV"
 
   # -------------------------
   #  ALIASES: Branch Filters
@@ -35,33 +44,36 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: curl https://sh.rustup.rs -sSf | sh -s -- -y
-      - run: echo 'export PATH=$HOME/.cargo/bin:$PATH' >> $BASH_ENV
-      - run: source /home/circleci/.bashrc
+      - run: *install-bun
       - restore_cache: *restore-deps-cache
-      - run: npm install
-      - run: npm install codecov
-      - run: npm test
-      - run: ./node_modules/.bin/codecov
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - codecov/upload:
+          version: v11.3.1
+          files: coverage/lcov.info
+          disable_search: true
+          fail_on_error: true
       - save_cache: *save-deps-cache
 
   build:
     <<: *defaults
     steps:
       - checkout
+      - run: *install-bun
       - restore_cache: *restore-deps-cache
-      - run: npm install
-      - run: npm run build
+      - run: bun install --frozen-lockfile
+      - run: bun run build
       - save_cache: *save-deps-cache
 
   release:
     <<: *defaults
     steps:
       - checkout
+      - run: *install-bun
       - restore_cache: *restore-deps-cache
-      - run: npm install
-      - run: npm run build
-      - run: npx semantic-release
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run release
       - save_cache: *save-deps-cache
 
 workflows:
