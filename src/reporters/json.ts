@@ -1,4 +1,3 @@
-import { JSONSchemaObject } from '@open-rpc/meta-schema';
 import { Call, IOptions } from '../coverage';
 import Reporter from './reporter';
 

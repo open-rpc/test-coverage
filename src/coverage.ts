@@ -68,7 +68,7 @@ export default async (options: IOptions) => {
     throw new Error("No methods to test");
   }
 
-  let calls: Call[] = [];
+  const calls: Call[] = [];
 
   let rules: Rule[] = [new JsonSchemaFakerRule(), new ExamplesRule()];
   if (options.rules && options.rules.length > 0) {

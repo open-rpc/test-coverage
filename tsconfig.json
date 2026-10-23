@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
-    "target": "es5",
-    "module": "commonjs",
-    "declaration": true,
-    "outDir": "./build",
+    "target": "ES2022",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "types": ["bun"],
+    "noEmit": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*.ts", "scripts/**/*.ts"]
 }

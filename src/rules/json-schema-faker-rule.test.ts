@@ -1,3 +1,4 @@
+import { describe, expect, it } from "bun:test";
 
 import { Call } from "../coverage";
 import JsonSchemaFakerRule from "./json-schema-faker-rule";

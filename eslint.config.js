@@ -1,15 +1,18 @@
-module.exports = {
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
-  },
-  plugins: ['@typescript-eslint'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-  ],
-  files: ['./src/**/*.ts'],
-};
+const tseslint = require("typescript-eslint");
 
+module.exports = tseslint.config(
+  ...tseslint.configs.recommended,
+  {
+    files: ["src/**/*.ts", "scripts/**/*.ts"],
+    rules: {
+      // Existing rule and reporter contracts use any and empty lifecycle hooks.
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": ["error", {
+        args: "none",
+        caughtErrors: "none",
+      }],
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-var-requires": "off",
+    },
+  },
+);

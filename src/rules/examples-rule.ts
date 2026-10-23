@@ -1,5 +1,5 @@
 import { ContentDescriptorObject, ExampleObject, ExamplePairingObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
-import { Call, IOptions } from "../coverage";
+import { Call } from "../coverage";
 import { isEqual } from "lodash";
 import Rule from "./rule";
 import paramsToObj from "../utils/params-to-obj";

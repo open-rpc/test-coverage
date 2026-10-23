@@ -59,7 +59,6 @@ class ConsoleRuleReporter implements Reporter {
         callsForRule.forEach((ex) => {
           if (ex.valid) {
             this.metrics.success++;
-            const expected = getExpectedString(ex);
             const timeDiff = (ex.timings!.endTime! - ex.timings!.startTime!);
             const threshold = 1000;
             const timeDiffColor = timeDiff <= threshold ? 'green' : 'yellow'; // Fast tests are green, slow tests are red
