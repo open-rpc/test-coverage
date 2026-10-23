@@ -1,4 +1,4 @@
-import { ContentDescriptorObject } from "@open-rpc/meta-schema";
+import type { ContentDescriptorObject } from "../types.js";
 
 const paramsToObj = (
   params: any[],

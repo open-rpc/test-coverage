@@ -1,6 +1,6 @@
 import coverage from "./coverage.js";
 import HTTPTransport from "./transports/HTTPTransport.js";
-import { OpenrpcDocument } from "@open-rpc/meta-schema";
+import type { OpenrpcDocument } from "./types.js";
 import { ITransport } from "./transports/ITransport.js";
 import ConsoleReporter from "./reporters/console.js";
 import JsonReporter from "./reporters/json.js";

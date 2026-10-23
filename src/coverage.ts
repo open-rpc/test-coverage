@@ -1,8 +1,8 @@
-import {
+import type {
   OpenrpcDocument,
   JSONSchema,
   MethodObject,
-} from "@open-rpc/meta-schema";
+} from "./types.js";
 import Reporter from "./reporters/emptyReporter.js";
 import JsonSchemaFakerRule from "./rules/json-schema-faker-rule.js";
 import ExamplesRule from "./rules/examples-rule.js";

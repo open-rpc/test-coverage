@@ -1,8 +1,8 @@
 import colors from "colors";
-import {
+import type {
   JSONSchemaObject,
   MethodObject,
-} from "@open-rpc/meta-schema";
+} from "../types.js";
 import {Call, IOptions} from "../coverage.js";
 import Reporter from "./reporter.js";
 

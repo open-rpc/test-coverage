@@ -1,4 +1,4 @@
-import { ContentDescriptorObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
+import type { ContentDescriptorObject, MethodObject, OpenrpcDocument } from "../types.js";
 import { Call } from "../coverage.js";
 import Ajv from "../utils/ajv.js";
 import Rule from "./rule.js";

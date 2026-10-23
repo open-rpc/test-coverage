@@ -1,4 +1,4 @@
-import { ContentDescriptorObject, ExampleObject, ExamplePairingObject, MethodObject, OpenrpcDocument } from "@open-rpc/meta-schema";
+import type { ContentDescriptorObject, ExampleObject, ExamplePairingObject, MethodObject, OpenrpcDocument } from "../types.js";
 import { Call } from "../coverage.js";
 import lodash from "lodash";
 import Rule from "./rule.js";
