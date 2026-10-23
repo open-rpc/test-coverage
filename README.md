@@ -46,7 +46,7 @@ bun add --global @open-rpc/test-coverage
 Requires Bun 1.4.2 or later. The CLI runs with Bun. The built library supports
 Node.js 22.14.0 or later and uses native `fetch`.
 
-### Breaking change
+### Breaking development stack change
 
 The CLI now requires Bun on `PATH`. Install Bun before updating the package.
 The library keeps its CommonJS entry point and existing `build/` import paths.
