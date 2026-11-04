@@ -75,6 +75,9 @@ The library no longer provides CommonJS modules. Change `require()` calls to
 ESM imports and add `.js` to imports from `build/`. The CLI requires Bun on
 `PATH`. The library requires Node.js 22.14.0 or later, or Bun 1.4.2 or later.
 
+### How to Guide
+[Guide to using test coverage](https://www.open-rpc.org/docs/test-coverage)
+
 ### Development
 
 ```sh
@@ -118,8 +121,6 @@ and its dependencies are pinned in `bun.lock`.
 ```
 open-rpc-test-coverage -s https://raw.githubusercontent.com/open-rpc/examples/master/service-descriptions/simple-math-openrpc.json --transport=http --reporters=console --skip=addition
 ```
-
-
 
 #### Screenshot
 
